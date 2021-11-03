@@ -2,6 +2,9 @@
 
 namespace PHPKitchen\Domain\Base;
 
+use ArrayAccess;
+use Exception;
+use IteratorAggregate;
 use PHPKitchen\Domain\Contracts\DomainEntity;
 use yii\base\Arrayable;
 use yii\base\ArrayableTrait;
@@ -16,13 +19,11 @@ use yii\base\ArrayAccessTrait;
  * @package PHPKitchen\Domain
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
-class Entity extends Component implements DomainEntity, \IteratorAggregate, \ArrayAccess, Arrayable {
+class Entity extends Component implements DomainEntity, IteratorAggregate, ArrayAccess, Arrayable {
     use ArrayableTrait;
     use ArrayAccessTrait;
-    /**
-     * @var \PHPKitchen\Domain\Base\DataMapper
-     */
-    private $_dataMapper;
+
+    private ?DataMapper $_dataMapper = null;
 
     public function getId() {
         return $this->dataMapper->primaryKey;
@@ -57,12 +58,11 @@ class Entity extends Component implements DomainEntity, \IteratorAggregate, \Arr
      * Note, that the data being populated is subject to the safety check by [[setAttributes()]].
      *
      * @param array $data the data array to load, typically `$_POST` or `$_GET`.
-     * @param string $formName the form name to use to load the data into the model.
      * If not set, [[formName()]] is used.
      *
      * @return boolean whether `load()` found the expected form in `$data`.
      */
-    public function load($data) {
+    public function load(array $data): bool {
         return $this->dataMapper->load($this->convertDataToSourceAttributes($data));
     }
 
@@ -72,21 +72,21 @@ class Entity extends Component implements DomainEntity, \IteratorAggregate, \Arr
      *
      * @param mixed $data traversable data of {@link _dataSource}.
      *
-     * @return mixed converted data. By default returns the same data as passed.
+     * @return mixed converted data. By default, returns the same data as passed.
      */
     protected function convertDataToSourceAttributes(&$data) {
         return $data;
     }
 
-    public function isNew() {
+    public function isNew(): bool {
         return $this->dataMapper->isRecordNew();
     }
 
-    public function isNotNew() {
+    public function isNotNew(): bool {
         return !$this->dataMapper->isRecordNew();
     }
 
-    public function hasAttribute($name) {
+    public function hasAttribute($name): bool {
         return $this->dataMapper->canGet($name);
     }
 
@@ -99,7 +99,7 @@ class Entity extends Component implements DomainEntity, \IteratorAggregate, \Arr
     public function __get($name) {
         try {
             $result = parent::__get($name);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $dataMapper = $this->getDataMapper();
             if ($dataMapper && $dataMapper->canGet($name)) {
                 $result = $dataMapper->get($name);
@@ -114,7 +114,7 @@ class Entity extends Component implements DomainEntity, \IteratorAggregate, \Arr
     public function __set($name, $value) {
         try {
             parent::__set($name, $value);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $dataMapper = $this->getDataMapper();
             if ($dataMapper && $dataMapper->canSet($name)) {
                 $dataMapper->set($name, $value);
@@ -130,10 +130,13 @@ class Entity extends Component implements DomainEntity, \IteratorAggregate, \Arr
         return parent::__isset($name) || ($dataMapper && $dataMapper->isPropertySet($name));
     }
 
+    /**
+     * @throws Exception
+     */
     public function __unset($name) {
         try {
             parent::__unset($name);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $dataMapper = $this->getDataMapper();
             if ($dataMapper && $dataMapper->isPropertySet($name)) {
                 $dataMapper->unSetProperty($name);
@@ -143,7 +146,7 @@ class Entity extends Component implements DomainEntity, \IteratorAggregate, \Arr
         }
     }
 
-    public function hasProperty($name, $checkVars = true, $checkBehaviors = true) {
+    public function hasProperty($name, $checkVars = true, $checkBehaviors = true): bool {
         $result = parent::hasProperty($name, $checkVars, $checkBehaviors);
         if (!$result) {
             $dataMapper = $this->getDataMapper();
@@ -153,7 +156,7 @@ class Entity extends Component implements DomainEntity, \IteratorAggregate, \Arr
         return $result;
     }
 
-    public function canGetProperty($name, $checkVars = true, $checkBehaviors = true) {
+    public function canGetProperty($name, $checkVars = true, $checkBehaviors = true): bool {
         $result = parent::canGetProperty($name, $checkVars, $checkBehaviors);
         if (!$result) {
             $dataMapper = $this->getDataMapper();
@@ -163,7 +166,7 @@ class Entity extends Component implements DomainEntity, \IteratorAggregate, \Arr
         return $result;
     }
 
-    public function canSetProperty($name, $checkVars = true, $checkBehaviors = true) {
+    public function canSetProperty($name, $checkVars = true, $checkBehaviors = true): bool {
         $result = parent::canSetProperty($name, $checkVars, $checkBehaviors);
         if (!$result) {
             $dataMapper = $this->getDataMapper();
@@ -175,15 +178,15 @@ class Entity extends Component implements DomainEntity, \IteratorAggregate, \Arr
 
     // -------------- GETTERS/SETTERS --------------
 
-    public function getDataMapper() {
+    public function getDataMapper(): ?DataMapper {
         return $this->_dataMapper;
     }
 
-    public function setDataMapper(DataMapper $source) {
+    public function setDataMapper(DataMapper $source): void {
         $this->_dataMapper = $source;
     }
 
-    protected function getData() {
+    protected function getData(): array {
         return $this->dataMapper->getAttributes();
     }
 }

@@ -11,7 +11,7 @@ use PHPKitchen\Domain\Contracts;
  * @package PHPKitchen\Domain\DB
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
-class RecordsRepository extends Base\Repository {
+abstract class RecordsRepository extends Base\Repository {
     public function __construct($config = []) {
         $this->entitiesProviderClassName = Domain\Data\RecordsProvider::class;
         parent::__construct($config);
@@ -22,7 +22,7 @@ class RecordsRepository extends Base\Repository {
     /**
      * @param Record|Contracts\DomainEntity $entity
      * @param bool $runValidation
-     * @param array $attributes
+     * @param array|null $attributes
      *
      * @return bool result.
      * @throws Domain\Exceptions\UnableToSaveEntityException
@@ -52,11 +52,7 @@ class RecordsRepository extends Base\Repository {
      * @return bool result.
      */
     public function delete(Contracts\DomainEntity $entity): bool {
-        if ($this->triggerModelEvent(self::EVENT_BEFORE_DELETE, $entity)) {
-            $result = $entity->deleteRecord();
-        } else {
-            $result = false;
-        }
+        $result = $this->triggerModelEvent(self::EVENT_BEFORE_DELETE, $entity) ? $entity->deleteRecord() : false;
         if ($result) {
             $this->triggerModelEvent(self::EVENT_AFTER_DELETE, $entity);
         }
@@ -75,7 +71,7 @@ class RecordsRepository extends Base\Repository {
 
     //----------------------- INSTANTIATION METHODS -----------------------//
 
-    public function createNewEntity() {
+    public function createNewEntity(): Contracts\DomainEntity {
         return $this->container->create([
             'class' => $this->entityClassName,
         ]);
@@ -86,13 +82,13 @@ class RecordsRepository extends Base\Repository {
     /**
      * @return RecordQuery
      */
-    public function find() {
+    public function find(): Contracts\RecordQuery {
         return $this->createQuery();
     }
 
     //----------------------- GETTERS/SETTERS -----------------------//
 
-    public function getRecordClassName() {
+    public function getRecordClassName(): string {
         return $this->getEntityClassName();
     }
 }

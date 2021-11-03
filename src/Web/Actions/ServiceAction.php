@@ -19,9 +19,9 @@ abstract class ServiceAction extends Action {
     /**
      * @var object a service class object
      */
-    private $_service;
+    private object $_service;
 
-    public function getService() {
+    public function getService(): object {
         if (!is_object($this->_service)) {
             $this->initService();
         }
@@ -29,8 +29,8 @@ abstract class ServiceAction extends Action {
         return $this->_service;
     }
 
-    public function setService($service): void {
-        if (!is_object($service) && (!class_exists($service) || !$this->container->has($service))) {
+    public function setService(object $service): void {
+        if ((!class_exists($service) || !$this->container->has($service))) {
             throw new InvalidConfigException("Service must be an object or container definition");
         }
         $this->_service = $service;

@@ -2,6 +2,9 @@
 
 namespace PHPKitchen\Domain\Mixins;
 
+use Yii;
+use yii\log\Logger;
+
 /**
  * Trait provides functions for logging and profiling.
  *
@@ -12,9 +15,9 @@ namespace PHPKitchen\Domain\Mixins;
  */
 trait LoggerAccess {
     /**
-     * @var \yii\log\Logger logger component.
+     * @var Logger logger component.
      */
-    protected static $_logger;
+    protected static Logger $_logger;
 
     /**
      * Logs a message with the given type and category.
@@ -26,9 +29,9 @@ trait LoggerAccess {
      * @param integer $level the level of the message. This must be one of the following:
      * `Logger::LEVEL_ERROR`, `Logger::LEVEL_WARNING`, `Logger::LEVEL_INFO`, `Logger::LEVEL_TRACE`,
      * `Logger::LEVEL_PROFILE_BEGIN`, `Logger::LEVEL_PROFILE_END`.
-     * @param string $category the category of the message.
+     * @param string|null $category the category of the message.
      */
-    public function log($message, $level, $category = '') {
+    public function log(string $message, int $level, ?string $category = ''): void {
         if (empty($category)) {
             $category = static::class;
         }
@@ -43,8 +46,8 @@ trait LoggerAccess {
      * @param string $message the message to be logged.
      * @param string $category the category of the message.
      */
-    public function logInfo($message, $category = '') {
-        static::log($message, \yii\log\Logger::LEVEL_INFO, $category);
+    public function logInfo(string $message, string $category = ''): void {
+        static::log($message, Logger::LEVEL_INFO, $category);
     }
 
     /**
@@ -55,8 +58,8 @@ trait LoggerAccess {
      * @param string $message the message to be logged.
      * @param string $category the category of the message.
      */
-    public function logWarning($message, $category = '') {
-        static::log($message, \yii\log\Logger::LEVEL_WARNING, $category);
+    public function logWarning(string $message, string $category = ''): void {
+        static::log($message, Logger::LEVEL_WARNING, $category);
     }
 
     /**
@@ -67,8 +70,8 @@ trait LoggerAccess {
      * @param string $message the message to be logged.
      * @param string $category the category of the message.
      */
-    public function logError($message, $category = '') {
-        static::log($message, \yii\log\Logger::LEVEL_ERROR, $category);
+    public function logError(string $message, string $category = ''): void {
+        static::log($message, Logger::LEVEL_ERROR, $category);
     }
 
     /**
@@ -90,8 +93,8 @@ trait LoggerAccess {
      *
      * @see endProfile()
      */
-    public function beginProfile($token, $category = '') {
-        static::getLogger()->log($token, \yii\log\Logger::LEVEL_PROFILE_BEGIN, $category);
+    public function beginProfile(string $token, string $category = ''): void {
+        static::getLogger()->log($token, Logger::LEVEL_PROFILE_BEGIN, $category);
     }
 
     /**
@@ -103,8 +106,8 @@ trait LoggerAccess {
      *
      * @see beginProfile()
      */
-    public function endProfile($token, $category = '') {
-        static::getLogger()->log($token, \yii\log\Logger::LEVEL_PROFILE_END, $category);
+    public function endProfile(string $token, string $category = ''): void {
+        static::getLogger()->log($token, Logger::LEVEL_PROFILE_END, $category);
     }
 
     /**
@@ -115,16 +118,16 @@ trait LoggerAccess {
      * @param string $message the message to be logged.
      * @param string $category the category of the message.
      */
-    public function trace($message, $category = '') {
-        static::getLogger()->log($message, \yii\log\Logger::LEVEL_TRACE, $category);
+    public function trace(string $message, string $category = ''): void {
+        static::getLogger()->log($message, Logger::LEVEL_TRACE, $category);
     }
 
     /**
-     * @return \yii\log\Logger
+     * @return Logger
      */
-    protected function getLogger() {
+    protected function getLogger(): Logger {
         if (!isset(static::$_logger)) {
-            static::$_logger = \Yii::$app->log->getLogger();
+            static::$_logger = Yii::$app->log->getLogger();
         }
 
         return static::$_logger;

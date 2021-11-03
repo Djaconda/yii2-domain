@@ -20,22 +20,22 @@ use PHPKitchen\Domain\Base\Entity;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class UserEntity extends Entity {
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = 2;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 2;
 
-    public function activate() {
+    public function activate(): void {
         $this->status = self::STATUS_ACTIVE;
     }
 
-    public function deActivate() {
+    public function deActivate(): void {
         $this->status = self::STATUS_INACTIVE;
     }
 
-    public function isActive() {
+    public function isActive(): bool {
         return $this->status === self::STATUS_ACTIVE;
     }
 
-    public function isInactive() {
+    public function isInactive(): bool {
         return $this->status === self::STATUS_INACTIVE;
     }
 }

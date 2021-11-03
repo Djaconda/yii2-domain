@@ -3,28 +3,31 @@
 namespace PHPKitchen\Domain\Data;
 
 use PHPKitchen\Domain\Contracts;
+use PHPKitchen\Domain\DB\EntitiesRepository;
+use PHPKitchen\Domain\DB\RecordQuery;
+use PHPKitchen\Domain\DB\RecordsRepository;
 use yii\data\ActiveDataProvider;
 
 /**
  * Represents DB records provider.
  *
- * @property \PHPKitchen\Domain\DB\EntitiesRepository|\PHPKitchen\Domain\DB\RecordsRepository $repository
- * @property \PHPKitchen\Domain\DB\RecordQuery $query
+ * @property EntitiesRepository|RecordsRepository $repository
+ * @property RecordQuery $query
  *
  * @package PHPKitchen\Domain\Data
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class RecordsProvider extends ActiveDataProvider {
     /**
-     * @var \PHPKitchen\Domain\DB\EntitiesRepository|\PHPKitchen\Domain\DB\RecordsRepository
+     * @var EntitiesRepository|RecordsRepository
      */
-    protected $_repository;
+    protected Contracts\Repository $_repository;
 
-    public function getRepository() {
+    public function getRepository(): Contracts\Repository {
         return $this->_repository;
     }
 
-    public function setRepository(Contracts\Repository $repository) {
+    public function setRepository(Contracts\Repository $repository): void {
         $this->_repository = $repository;
     }
 }

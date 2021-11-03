@@ -2,17 +2,21 @@
 
 namespace PHPKitchen\Domain\Web\Mixins;
 
+use PHPKitchen\DI\Mixins\ContainerAccess;
+use PHPKitchen\DI\Mixins\ServiceLocatorAccess;
+use PHPKitchen\Domain\Base\Entity;
 use PHPKitchen\Domain\Web\Base\ViewModel;
+use yii\web\Controller;
 
 /**
  * Represents
  *
- * @property \yii\web\Controller|\PHPKitchen\Domain\Contracts\EntityCrudController $controller
+ * @property Controller $controller
  * @property string $id
  * @property string $viewModelClassName
  *
- * @mixin \PHPKitchen\DI\Mixins\ServiceLocatorAccess
- * @mixin \PHPKitchen\DI\Mixins\ContainerAccess
+ * @mixin ServiceLocatorAccess
+ * @mixin ContainerAccess
  *
  * @package PHPKitchen\Domain\Web\Mixins
  * @author Dmitry Kolodko <prowwid@gmail.com>
@@ -22,7 +26,7 @@ trait ViewModelManagement {
     /**
      * @var string the scenario to be assigned to the new model before it is validated and saved.
      */
-    public $scenario = ViewModel::SCENARIO_DEFAULT;
+    public string $scenario = ViewModel::SCENARIO_DEFAULT;
 
     protected function createNewModel() {
         $entity = $this->getRepository()->createNewEntity();
@@ -31,9 +35,9 @@ trait ViewModelManagement {
     }
 
     /**
-     * @param \PHPKitchen\Domain\Base\Entity $entity
+     * @param Entity $entity
      *
-     * @return \PHPKitchen\Domain\Web\Base\ViewModel
+     * @return ViewModel
      */
     protected function createViewModel($entity) {
         $model = $this->container->create([

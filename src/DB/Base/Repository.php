@@ -2,6 +2,7 @@
 
 namespace PHPKitchen\Domain\DB\Base;
 
+use Exception;
 use PHPKitchen\Domain;
 use PHPKitchen\Domain\Base\Component;
 use PHPKitchen\Domain\Contracts;
@@ -25,49 +26,50 @@ use yii\base\InvalidConfigException;
  */
 abstract class Repository extends Component implements Contracts\Repository {
     use TransactionAccess;
+
     /**
      * @var array Stores errors which could occur during save process
      */
-    public $errors = [];
+    public array $errors = [];
     /**
-     * @var int indicates whether to throw exception or handle it
+     * @var bool indicates whether to throw exception or handle it
      */
-    public $throwExceptions = false;
+    public bool $throwExceptions = false;
     /**
      * @var bool indicates whether to use DB transaction or not.
      */
-    public $useTransactions = true;
+    public bool $useTransactions = true;
     /**
      * @var string entities provider class name. Change it in {@link init()} method if you need
      * custom provider.
      */
-    public $entitiesProviderClassName;
+    public string $entitiesProviderClassName;
     /**
      * @var string class name of an event that being triggered on each important action. Change it in {@link init()} method
      * if you need custom event.
      */
-    public $modelEventClassName = Domain\Base\ModelEvent::class;
+    public string $modelEventClassName = Domain\Base\ModelEvent::class;
     /**
      * @var string records query class name. This class being used if no query specified in morel directory. Change it
      * in {@link init()} method if you need custom default query.
      */
-    private $_defaultQueryClassName = Domain\DB\RecordQuery::class;
-    private $_className;
+    private string $_defaultQueryClassName = Domain\DB\RecordQuery::class;
+    private ?string $_className = null;
     /**
-     * @var string indicates what entity to use. By default equal following template "{model name}Entity" where model name is equal to
+     * @var nuLL|string indicates what entity to use. By default, equal following template "{model name}Entity" where model name is equal to
      * the repository class name without "Repository" suffix.
      */
-    private $_entityClassName;
+    private ?string $_entityClassName = null;
     /**
-     * @var string indicates what records query to use. By default equal following template "{model name}Query" where model name is equal to
+     * @var null|string indicates what records query to use. By default, equal following template "{model name}Query" where model name is equal to
      * the repository class name without "Repository" suffix.
      */
-    private $_queryClassName;
+    private ?string $_queryClassName = null;
     /**
-     * @var string indicates what record to use. By default equal following template "{model name}Record" where model name is equal to
+     * @var null|string indicates what record to use. By default, equal following template "{model name}Record" where model name is equal to
      * the repository class name without "Repository" suffix.
      */
-    private $_recordClassName;
+    private ?string $_recordClassName = null;
 
     /**
      * @return Domain\DB\Finder|Domain\DB\RecordQuery
@@ -78,25 +80,31 @@ abstract class Repository extends Component implements Contracts\Repository {
 
     //region ----------------------- ENTITY MANIPULATION METHODS ------------------------
 
-    public function validateAndSave(Contracts\DomainEntity $entity, ?array $attributes = null) {
+    public function validateAndSave(Contracts\DomainEntity $entity, ?array $attributes = null): bool {
         $this->clearErrors();
 
-        return $this->useTransactions ? $this->saveEntityUsingTransaction($entity, $runValidation = true, $attributes) : $this->saveEntityInternal($entity, $runValidation = true, $attributes);
+        return $this->useTransactions ? $this->saveEntityUsingTransaction($entity, $runValidation = true,
+            $attributes) : $this->saveEntityInternal($entity, $runValidation = true, $attributes);
     }
 
-    public function saveWithoutValidation(Contracts\DomainEntity $entity, ?array $attributes = null) {
+    public function saveWithoutValidation(Contracts\DomainEntity $entity, ?array $attributes = null): bool {
         $this->clearErrors();
 
-        return $this->useTransactions ? $this->saveEntityUsingTransaction($entity, $runValidation = false, $attributes) : $this->saveEntityInternal($entity, $runValidation = false, $attributes);
+        return $this->useTransactions ? $this->saveEntityUsingTransaction($entity, $runValidation = false,
+            $attributes) : $this->saveEntityInternal($entity, $runValidation = false, $attributes);
     }
 
-    protected function saveEntityUsingTransaction(Contracts\DomainEntity $entity, bool $runValidation, ?array $attributes) {
+    protected function saveEntityUsingTransaction(
+        Contracts\DomainEntity $entity,
+        bool $runValidation,
+        ?array $attributes
+    ): bool {
         $this->beginTransaction();
         $exception = null;
         try {
             $result = $this->saveEntityInternal($entity, $runValidation, $attributes);
             $result ? $this->commitTransaction() : null;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $result = false;
             $exception = $e;
             $this->addError($e->getMessage());
@@ -129,13 +137,10 @@ abstract class Repository extends Component implements Contracts\Repository {
      * }
      * ```
      *
-     * @param boolean $insert whether this method called while inserting a record.
-     * If `false`, it means the method is called while updating a record.
-     *
      * @return boolean whether the insertion or updating should continue.
      * If `false`, the insertion or updating will be cancelled.
      */
-    protected function triggerModelEvent($eventName, $entity) {
+    protected function triggerModelEvent(string $eventName, Contracts\DomainEntity $entity): bool {
         /**
          * @var domain\Base\ModelEvent $event
          */
@@ -148,7 +153,7 @@ abstract class Repository extends Component implements Contracts\Repository {
     /**
      * @return EntitiesProvider an instance of data provider.
      */
-    public function getEntitiesProvider() {
+    public function getEntitiesProvider(): EntitiesProvider {
         return $this->container->create([
             'class' => $this->entitiesProviderClassName,
             'query' => $this->createQuery(),
@@ -162,38 +167,38 @@ abstract class Repository extends Component implements Contracts\Repository {
     /**
      * @param mixed $pk primary key of the entity
      *
-     * @return Domain\Base\Entity
+     * @return Contracts\DomainEntity
      */
-    public function findOneWithPk($pk) {
+    public function findOneWithPk($pk): Contracts\DomainEntity {
         return $this->find()->oneWithPk($pk);
     }
 
     /**
-     * @return Domain\Base\Entity[]
+     * @return Contracts\DomainEntity[]
      */
-    public function findAll() {
+    public function findAll(): array {
         return $this->find()->all();
     }
 
     /**
      * @param int $batchSize
      *
-     * @return Domain\Base\Entity[]
+     * @return Contracts\DomainEntity[]
      */
-    public function each($batchSize = 100) {
+    public function each(int $batchSize = 100): array {
         return $this->find()->each($batchSize);
     }
 
     /**
      * @param int $batchSize
      *
-     * @return Domain\Base\Entity[][]
+     * @return Contracts\DomainEntity[][]
      */
-    public function getBatchIterator($batchSize = 100) {
+    public function getBatchIterator(int $batchSize = 100): array {
         return $this->find()->each($batchSize);
     }
 
-    public function createQuery() {
+    public function createQuery(): Contracts\RecordQuery {
         return $this->container->create($this->queryClassName, [$recordClass = $this->recordClassName]);
     }
     //endregion
@@ -230,18 +235,18 @@ abstract class Repository extends Component implements Contracts\Repository {
         $this->setErrors([]);
     }
 
-    public function getDefaultQueryClassName() {
+    public function getDefaultQueryClassName(): string {
         return $this->_defaultQueryClassName;
     }
 
-    public function setDefaultQueryClassName($defaultQueryClass) {
+    public function setDefaultQueryClassName(string $defaultQueryClass): void {
         if (!class_exists($defaultQueryClass) && !interface_exists($defaultQueryClass)) {
             throw new InvalidConfigException('Default query class should be an existing class or interface!');
         }
         $this->_defaultQueryClassName = $defaultQueryClass;
     }
 
-    public function getClassName() {
+    public function getClassName(): string {
         if (null === $this->_className) {
             $this->_className = static::class;
         }
@@ -249,11 +254,11 @@ abstract class Repository extends Component implements Contracts\Repository {
         return $this->_className;
     }
 
-    public function setClassName($className) {
+    public function setClassName(string $className): void {
         $this->_className = $className;
     }
 
-    public function getEntityClassName() {
+    public function getEntityClassName(): string {
         if (null === $this->_entityClassName) {
             $this->_entityClassName = $this->buildModelElementClassName('Entity');
         }
@@ -261,11 +266,11 @@ abstract class Repository extends Component implements Contracts\Repository {
         return $this->_entityClassName;
     }
 
-    public function setEntityClassName($entityClassName) {
+    public function setEntityClassName(string $entityClassName): void {
         $this->_entityClassName = $entityClassName;
     }
 
-    public function getQueryClassName() {
+    public function getQueryClassName(): string {
         if (null === $this->_queryClassName) {
             $this->_queryClassName = $this->buildModelElementClassName('Query', $this->defaultQueryClassName);
         }
@@ -273,11 +278,11 @@ abstract class Repository extends Component implements Contracts\Repository {
         return $this->_queryClassName;
     }
 
-    public function setQueryClassName($queryClassName) {
+    public function setQueryClassName(string $queryClassName): void {
         $this->_queryClassName = $queryClassName;
     }
 
-    public function getRecordClassName() {
+    public function getRecordClassName(): string {
         if (null === $this->_recordClassName) {
             $this->_recordClassName = $this->buildModelElementClassName('Record');
         }
@@ -285,11 +290,11 @@ abstract class Repository extends Component implements Contracts\Repository {
         return $this->_recordClassName;
     }
 
-    public function setRecordClassName($recordClassName) {
+    public function setRecordClassName(string $recordClassName): void {
         $this->_recordClassName = $recordClassName;
     }
 
-    protected function buildModelElementClassName($modelElement, $defaultClass = null) {
+    protected function buildModelElementClassName(string $modelElement, ?string $defaultClass = null): string {
         $selfClassName = $this->className;
         $elementClassName = str_replace('Repository', $modelElement, $selfClassName);
         if (!class_exists($elementClassName) && !interface_exists($elementClassName)) {

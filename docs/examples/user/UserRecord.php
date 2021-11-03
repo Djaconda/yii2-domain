@@ -3,6 +3,8 @@
 namespace PHPKitchen\Examples\User;
 
 use PHPKitchen\Domain\DB\Record;
+use yii\db\ActiveQuery;
+use yii2tech\ar\role\RoleBehavior;
 
 /**
  * Represents record of a user in the DB.
@@ -20,11 +22,11 @@ use PHPKitchen\Domain\DB\Record;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class UserRecord extends Record {
-    public function behaviors() {
+    public function behaviors(): array {
         return [
             'role' => [
                 // see https://github.com/yii2tech/ar-role
-                'class' => \yii2tech\ar\role\RoleBehavior::class,
+                'class' => RoleBehavior::class,
                 'roleRelation' => 'profile',
             ],
         ];
@@ -34,14 +36,14 @@ class UserRecord extends Record {
      * @override
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName(): string {
         return 'User';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function rules(): array {
         return [
             [
                 [
@@ -53,7 +55,7 @@ class UserRecord extends Record {
         ];
     }
 
-    public function getProfile() {
+    public function getProfile(): ActiveQuery {
         return $this->hasOne(ProfileRecord::class, ['userId' => 'id'])->alias('profile');
     }
 }

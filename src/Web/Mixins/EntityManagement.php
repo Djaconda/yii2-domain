@@ -2,29 +2,32 @@
 
 namespace PHPKitchen\Domain\Web\Mixins;
 
+use PHPKitchen\DI\Mixins\ContainerAccess;
+use PHPKitchen\DI\Mixins\ServiceLocatorAccess;
 use PHPKitchen\Domain\Contracts\Repository;
+use PHPKitchen\Domain\DB\EntitiesRepository;
 use yii\base\InvalidConfigException;
 use yii\web\NotFoundHttpException;
 
 /**
  * Represents
  *
- * @property \PHPKitchen\Domain\DB\EntitiesRepository $repository
+ * @property EntitiesRepository $repository
  *
- * @mixin \PHPKitchen\DI\Mixins\ServiceLocatorAccess
- * @mixin \PHPKitchen\DI\Mixins\ContainerAccess
+ * @mixin ServiceLocatorAccess
+ * @mixin ContainerAccess
  *
  * @package PHPKitchen\Domain\Web\Mixins
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 trait EntityManagement {
-    public $notFoundModelExceptionMessage = 'Requested page does not exist!';
-    public $notFoundModelExceptionClassName = NotFoundHttpException::class;
+    public string $notFoundModelExceptionMessage = 'Requested page does not exist!';
+    public string $notFoundModelExceptionClassName = NotFoundHttpException::class;
     /**
-     * @var \PHPKitchen\Domain\DB\EntitiesRepository
+     * @var EntitiesRepository
      */
     private $_repository;
-    
+
     public function findEntityByPk($pk) {
         $entity = $this->getRepository()->find()->oneWithPk($pk);
         if (null === $entity) {
@@ -39,7 +42,7 @@ trait EntityManagement {
         return $entity;
     }
 
-    public function getRepository() {
+    public function getRepository(): Repository {
         if ($this->_repository === null) {
             throw new InvalidConfigException('Repository should be set in ' . static::class);
         }
@@ -47,7 +50,7 @@ trait EntityManagement {
         return $this->_repository;
     }
 
-    public function setRepository($repository) {
+    public function setRepository($repository): void {
         if (is_string($repository) || is_array($repository)) {
             $this->_repository = $this->container->create($repository);
         } elseif (is_object($repository) && $repository instanceof Repository) {

@@ -19,7 +19,7 @@ abstract class Strategy extends Component implements Contracts\Strategy {
      * @return mixed strategy result.
      */
     public function __invoke(...$params) {
-        return $this->call(...$params);
+        return $this->call();
     }
 
     public function call() {
@@ -32,11 +32,11 @@ abstract class Strategy extends Component implements Contracts\Strategy {
         return $result;
     }
 
-    protected function executeBeforeCall() {
+    protected function executeBeforeCall(): void {
         $this->trigger(self::EVENT_BEFORE_CALL, new Event());
     }
 
-    protected function executeAfterCall() {
+    protected function executeAfterCall(): void {
         $this->trigger(self::EVENT_AFTER_CALL, new Event());
     }
 }

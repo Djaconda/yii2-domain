@@ -60,7 +60,7 @@ class EntityProviderTest extends Spec {
         foreach ($models as $model) {
             $I->expectThat('data provider have converted record to entity');
             $I->see($model)
-              ->isInternalType('array');
+              ->isArray();
         }
     }
 

@@ -5,6 +5,8 @@ namespace PHPKitchen\Domain\Web\Actions;
 use PHPKitchen\Domain\Exceptions\UnableToSaveEntityException;
 use PHPKitchen\Domain\Web\Base\Action;
 use PHPKitchen\Domain\Web\Mixins\ModelSearching;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * Represents
@@ -14,28 +16,30 @@ use PHPKitchen\Domain\Web\Mixins\ModelSearching;
  */
 class DeleteEntity extends Action {
     use ModelSearching;
-    public $failToDeleteErrorFlashMessage = 'Unable to delete entity';
-    public $successfulDeleteFlashMessage = 'Entity successfully deleted';
+
+    public string $failToDeleteErrorFlashMessage = 'Unable to delete entity';
+    public string $successfulDeleteFlashMessage = 'Entity successfully deleted';
+    /** @var string|array|callable a url to redirect to a next page. */
     public $redirectUrl;
 
-    public function init() {
+    public function init(): void {
         $this->setViewFileIfNotSetTo('list');
     }
 
     /**
      * @param int $id
      *
-     * @return \yii\web\Response
-     * @throws \yii\web\NotFoundHttpException
+     * @return Response
+     * @throws NotFoundHttpException
      */
-    public function run($id) {
+    public function run(int $id) {
         $entity = $this->findEntityByIdentifierOrFail($id);
         $this->tryToDeleteEntity($entity);
 
         return $this->redirectToNextPage();
     }
 
-    protected function tryToDeleteEntity($entity) {
+    protected function tryToDeleteEntity($entity): void {
         try {
             $savedSuccessfully = $this->getRepository()->delete($entity);
         } catch (UnableToSaveEntityException $e) {
@@ -48,7 +52,7 @@ class DeleteEntity extends Action {
         }
     }
 
-    protected function redirectToNextPage() {
+    protected function redirectToNextPage(): Response {
         if (null === $this->redirectUrl) {
             $redirectUrl = ['list'];
         } elseif (is_callable($this->redirectUrl)) {

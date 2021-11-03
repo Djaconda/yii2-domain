@@ -3,6 +3,7 @@
 namespace PHPKitchen\Domain\Contracts;
 
 use yii\db\ActiveQueryInterface;
+use yii\db\ActiveRecord;
 
 /**
  * Represents
@@ -19,7 +20,7 @@ interface RecordQuery extends ActiveQueryInterface {
     /**
      * @param $pk
      *
-     * @return \yii\db\ActiveRecord|array|null
+     * @return ActiveRecord|array|null
      */
     public function oneWithPk($pk);
 }

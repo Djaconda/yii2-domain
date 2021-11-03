@@ -3,6 +3,7 @@
 namespace PHPKitchen\Domain\Web\Base\Models;
 
 use PHPKitchen\Domain\Contracts\Specification;
+use PHPKitchen\Domain\Data\EntitiesProvider;
 
 /**
  * Represents a view model designed to be used in listing actions.
@@ -11,14 +12,14 @@ use PHPKitchen\Domain\Contracts\Specification;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class ListingModel extends ViewModel {
-    public $fetchDataAsArray = true;
+    public bool $fetchDataAsArray = true;
 
     /**
      * Override this method
      *
-     * @return \PHPKitchen\Domain\Data\EntitiesProvider
+     * @return EntitiesProvider
      */
-    public function getDataProvider() {
+    public function getDataProvider(): EntitiesProvider {
         $provider = $this->repository->getEntitiesProvider();
         if ($this->fetchDataAsArray) {
             $provider->query->asArray();

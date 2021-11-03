@@ -2,19 +2,23 @@
 
 namespace PHPKitchen\Domain\Web\Mixins;
 
+use PHPKitchen\DI\Mixins\ContainerAccess;
+use PHPKitchen\DI\Mixins\ServiceLocatorAccess;
+use PHPKitchen\Domain\DB\EntitiesRepository;
 use yii\base\InvalidConfigException;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * Represents
  *
- * @property \yii\web\Controller $controller
+ * @property Controller $controller
  * @property string $id
- * @property \PHPKitchen\Domain\DB\EntitiesRepository $repository
+ * @property EntitiesRepository $repository
  * @property callable $searchBy
  *
- * @mixin \PHPKitchen\DI\Mixins\ServiceLocatorAccess
- * @mixin \PHPKitchen\DI\Mixins\ContainerAccess
+ * @mixin ServiceLocatorAccess
+ * @mixin ContainerAccess
  * @mixin ViewModelManagement
  *
  * @package PHPKitchen\Domain\Web\Mixins

@@ -14,6 +14,7 @@ use PHPKitchen\Domain\Web\Mixins\ViewModelManagement;
  */
 class ListRecords extends Action {
     use ViewModelManagement;
+
     /**
      * @var callable a PHP callable that will be called to prepare a data provider that
      * should return a collection of the models. If not set, [[prepareDataProvider()]] will be used instead.
@@ -30,7 +31,7 @@ class ListRecords extends Action {
      */
     public $prepareDataProvider;
 
-    public function init() {
+    public function init(): void {
         $this->setViewFileIfNotSetTo('list');
         if (!$this->viewModelClassName) {
             $this->viewModelClassName = ListingModel::class;
@@ -42,6 +43,6 @@ class ListRecords extends Action {
         $request = $this->getRequest();
         $model->load($request->queryParams);
 
-        return $this->renderViewFile(compact('model'));
+        return $this->renderViewFile(['model' => $model]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace PHPKitchen\Domain\DB\Mixins;
 
+use PHPKitchen\DI\Mixins\ContainerAccess;
 use PHPKitchen\Domain\DB\QueryConditionBuilder;
 
 /**
@@ -9,32 +10,32 @@ use PHPKitchen\Domain\DB\QueryConditionBuilder;
  *
  * @property QueryConditionBuilder $conditionBuilder protected alias of the {@link _conditionBuilder}
  *
- * @mixin \PHPKitchen\DI\Mixins\ContainerAccess
+ * @mixin ContainerAccess
  *
  * @package PHPKitchen\Domain\DB\Mixins
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 trait QueryConditionBuilderAccess {
-    protected $conditionBuilderClassName = QueryConditionBuilder::class;
-    private $_conditionBuilder;
+    protected string $conditionBuilderClassName = QueryConditionBuilder::class;
+    private ?QueryConditionBuilder $_conditionBuilder = null;
 
     /**
      * Alias of {@link QueryConditionBuilder::buildAliasedNameOfField}
      *
      * @param string $field field name.
-     * @param null $alias optional alias. If not used query alias will be used.
+     * @param string|null $alias optional alias. If not used query alias will be used.
      *
      * @return string
      */
-    public function buildAliasedNameOfField($field, $alias = null) {
+    public function buildAliasedNameOfField(string $field, ?string $alias = null): string {
         return $this->conditionBuilder->buildAliasedNameOfField($field, $alias);
     }
 
-    public function buildAliasedNameOfParam($param, $alias = null) {
+    public function buildAliasedNameOfParam($param, $alias = null): string {
         return $this->conditionBuilder->buildAliasedNameOfParam($param, $alias);
     }
 
-    protected function getConditionBuilder() {
+    protected function getConditionBuilder(): QueryConditionBuilder {
         if (null === $this->_conditionBuilder) {
             $this->_conditionBuilder = $this->container->create($this->conditionBuilderClassName, [$query = $this]);
         }

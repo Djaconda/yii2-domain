@@ -8,17 +8,22 @@ use PHPKitchen\DI\Mixins\ContainerAccess;
 use PHPKitchen\DI\Mixins\ServiceLocatorAccess;
 use PHPKitchen\Domain\Base\Entity;
 use PHPKitchen\Domain\Contracts\DomainEntity;
+use PHPKitchen\Domain\Contracts\EntityController;
+use PHPKitchen\Domain\Contracts\Repository;
+use PHPKitchen\Domain\Data\EntitiesProvider;
+use PHPKitchen\Domain\DB\EntitiesRepository;
 use PHPKitchen\Domain\Web\Contracts\RepositoryAware;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
+use yii\web\Controller;
 
 /**
  * Represents base view model.
  *
  * @property mixed $id
- * @property \PHPKitchen\Domain\Contracts\EntityController|\yii\web\Controller $controller
- * @property \PHPKitchen\Domain\DB\EntitiesRepository $repository
- * @property \PHPKitchen\Domain\Data\EntitiesProvider $dataProvider
+ * @property EntityController|Controller $controller
+ * @property EntitiesRepository $repository
+ * @property EntitiesProvider $dataProvider
  * @property Entity $entity
  *
  * @package PHPKitchen\Domain\Web\Base
@@ -27,12 +32,13 @@ use yii\helpers\ArrayHelper;
 class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
     use ContainerAccess;
     use ServiceLocatorAccess;
+
     /**
      * @var Entity
      */
     private $_entity;
     /**
-     * @var array Defines map of entity attributes required in {@link convertAttributesToEntityAttributes()}
+     * @var null|array Defines map of entity attributes required in {@link convertAttributesToEntityAttributes()}
      * Format of map:
      * <pre>
      * [
@@ -42,9 +48,9 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
      * ]
      * </pre>
      */
-    private $_entityAttributesMap;
+    private ?array $_entityAttributesMap = null;
     /**
-     * @var \PHPKitchen\Domain\Contracts\EntityController|\yii\web\Controller
+     * @var EntityController|Controller
      */
     private $_controller;
 
@@ -144,27 +150,27 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
     }
 
     //region -------------------- GETTERS/SETTERS --------------------
-    public function getEntity() {
+    public function getEntity(): ?DomainEntity {
         return $this->_entity;
     }
 
-    public function setEntity(DomainEntity $entity) {
+    public function setEntity(DomainEntity $entity): void {
         $this->_entity = $entity;
     }
 
-    public function getId() {
+    public function getId(): int {
         return $this->getEntity()->id;
     }
 
-    public function getController() {
+    public function getController(): ?Controller {
         return $this->_controller;
     }
 
-    public function setController($controller) {
+    public function setController(Controller $controller): void {
         $this->_controller = $controller;
     }
 
-    public function getRepository() {
+    public function getRepository(): Repository {
         if ($this->controller->action instanceof RepositoryAware) {
             return $this->controller->action->repository;
         }

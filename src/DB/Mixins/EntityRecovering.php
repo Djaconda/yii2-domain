@@ -16,7 +16,7 @@ trait EntityRecovering {
      *
      * @return bool result.
      */
-    public function recover(DomainEntity $entity) {
+    public function recover(DomainEntity $entity): bool {
         $result = false;
         if ($this->triggerModelEvent(self::EVENT_BEFORE_DELETE, $entity)) {
             $dataSource = $entity->getDataMapper()->getDataSource();
@@ -30,4 +30,6 @@ trait EntityRecovering {
 
         return $result;
     }
+
+    abstract public function triggerModelEvent(string $event, DomainEntity $entity);
 }

@@ -2,20 +2,23 @@
 
 namespace PHPKitchen\Domain\Mixins;
 
+use PHPKitchen\DI\Mixins\ContainerAccess;
+use PHPKitchen\Domain\Base\Strategy;
+
 /**
  * Represents
  *
- * @mixin \PHPKitchen\DI\Mixins\ContainerAccess
+ * @mixin ContainerAccess
  *
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 trait StrategiesComposingAlgorithm {
     /**
-     * @var \PHPKitchen\Domain\Base\Strategy[]|array
+     * @var Strategy[]|array
      */
-    private $_chainedStrategies;
+    private array $_chainedStrategies;
 
-    public function executeCallAction() {
+    public function executeCallAction(): void {
         $chainedStrategies = $this->getChainedStrategies();
         $container = $this->container;
         foreach ($chainedStrategies as $key => $chainedStrategy) {
@@ -26,15 +29,15 @@ trait StrategiesComposingAlgorithm {
         }
     }
 
-    protected function getStrategyConstructorArguments() {
+    protected function getStrategyConstructorArguments(): array {
         return [];
     }
 
-    public function getChainedStrategies() {
+    public function getChainedStrategies(): array {
         return $this->_chainedStrategies;
     }
 
-    public function setChainedStrategies($chainedStrategies) {
+    public function setChainedStrategies(array $chainedStrategies): void {
         $this->_chainedStrategies = $chainedStrategies;
     }
 }

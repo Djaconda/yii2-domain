@@ -9,7 +9,8 @@ use PHPKitchen\Domain\DB\EntitiesRepository;
  * Represent classes aware of repository
  *
  * Own properties:
- * @property \PHPKitchen\Domain\DB\EntitiesRepository $repository
+ *
+ * @property EntitiesRepository $repository
  *
  * @package PHPKitchen\Domain\Web\Contracts
  * @author Vladimir Siritsa <vladimir.siritsa@bitfocus.com>
@@ -18,10 +19,10 @@ interface RepositoryAware {
     /**
      * @return Repository|EntitiesRepository
      */
-    public function getRepository();
+    public function getRepository(): Repository;
 
     /**
      * @param Repository $repository
      */
-    public function setRepository($repository);
+    public function setRepository($repository): void;
 }

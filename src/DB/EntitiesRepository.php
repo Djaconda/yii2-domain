@@ -23,17 +23,17 @@ class EntitiesRepository extends Base\Repository {
      * if you need custom mapper. But be aware - data mapper is internal class and it is strongly advised to not
      * touch this property.
      */
-    public $dataMapperClassName = Domain\Base\DataMapper::class;
+    public string $dataMapperClassName = Domain\Base\DataMapper::class;
     /**
-     * @var string indicates what finder to use. By default equal following template "{model name}Finder" where model name is equal to
+     * @var string indicates what finder to use. By default, equal following template "{model name}Finder" where model name is equal to
      * the repository class name without "Repository" suffix.
      */
-    private $_finderClassName;
+    private ?string $_finderClassName = null;
     /**
      * @var string entities finder class name. This class being used if no finder specified in morel directory. Change it
      * in {@link init()} method if you need custom default finder.
      */
-    private $_defaultFinderClassName = Finder::class;
+    private string $_defaultFinderClassName = Finder::class;
 
     public function __construct($config = []) {
         $this->entitiesProviderClassName = EntitiesProvider::class;
@@ -45,7 +45,7 @@ class EntitiesRepository extends Base\Repository {
     /**
      * @param Contracts\DomainEntity $entity
      * @param bool $runValidation
-     * @param array $attributes
+     * @param array|null $attributes
      *
      * @return bool
      * @throws UnableToSaveEntityException
@@ -180,12 +180,17 @@ class EntitiesRepository extends Base\Repository {
      * @return bool
      */
     public function wasAttributeValueChanged(Contracts\DomainEntity $entity, string $name): bool {
-        return $this->getChangedAttribute($entity, $name) != $entity->{$name};
+        $oldValue = $this->getChangedAttribute($entity, $name);
+        if ($oldValue === false) {
+            return false;
+        }
+
+        return $oldValue != $entity->{$name};
     }
     //endregion
 
     //region ----------------------- INSTANTIATION METHODS ------------------------
-    public function createNewEntity() {
+    public function createNewEntity(): Contracts\DomainEntity {
         $container = $this->container;
 
         return $container->create([
@@ -194,11 +199,11 @@ class EntitiesRepository extends Base\Repository {
         ]);
     }
 
-    private function createRecord() {
+    private function createRecord(): Contracts\Record {
         return $this->container->create($this->recordClassName);
     }
 
-    public function createEntityFromSource(Contracts\EntityDataSource $record) {
+    public function createEntityFromSource(Contracts\EntityDataSource $record): Contracts\DomainEntity {
         $container = $this->container;
 
         return $container->create([
@@ -216,7 +221,7 @@ class EntitiesRepository extends Base\Repository {
         return $this->createFinder();
     }
 
-    protected function createFinder() {
+    protected function createFinder(): Finder {
         return $this->container->create($this->finderClassName, [
             $query = $this->createQuery(),
             $repository = $this,
@@ -225,7 +230,7 @@ class EntitiesRepository extends Base\Repository {
     //endregion
 
     //region ----------------------- GETTERS/SETTERS ------------------------------
-    protected function getFinderClassName() {
+    protected function getFinderClassName(): string {
         if (null === $this->_finderClassName) {
             $this->_finderClassName = $this->buildModelElementClassName('Finder', $this->defaultFinderClassName);
         }
@@ -233,7 +238,7 @@ class EntitiesRepository extends Base\Repository {
         return $this->_finderClassName;
     }
 
-    public function setFinderClassName($finderClassName): void {
+    public function setFinderClassName(string $finderClassName): void {
         $this->_finderClassName = $finderClassName;
     }
 
@@ -241,7 +246,7 @@ class EntitiesRepository extends Base\Repository {
         return $this->_defaultFinderClassName;
     }
 
-    public function setDefaultFinderClassName($defaultFinderClass): void {
+    public function setDefaultFinderClassName(string $defaultFinderClass): void {
         if (!class_exists($defaultFinderClass) && !interface_exists($defaultFinderClass)) {
             throw new InvalidConfigException('Default finder class should be an existing class or interface!');
         }

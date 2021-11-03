@@ -2,6 +2,9 @@
 
 namespace PHPKitchen\Domain\DB\Mixins;
 
+use PHPKitchen\Domain\DB\Record;
+use ReflectionMethod;
+
 /**
  * Combines functions required for {@link PHPKitchen\Domain\DB\RecordQuery}.
  * The only goal of this mixin is to allow building custom query classes without extending {@link PHPKitchen\Domain\DB\RecordQuery}
@@ -15,9 +18,9 @@ namespace PHPKitchen\Domain\DB\Mixins;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 trait RecordQueryFunctions {
-    public $primaryKeyName = 'id';
-    private $_alias;
-    private $_mainTableName;
+    public string $primaryKeyName = 'id';
+    private ?string $_alias = null;
+    private ?string $_mainTableName = null;
     //region ------------------- SEARCH METHODS  --------------------
 
     /**
@@ -47,7 +50,7 @@ trait RecordQueryFunctions {
     /**
      * @param $pk
      *
-     * @return \PHPKitchen\Domain\DB\Record|array|null
+     * @return Record|array|null
      */
     public function oneWithPk($pk) {
         $pkParam = $this->buildAliasedNameOfParam('pk');
@@ -75,20 +78,20 @@ trait RecordQueryFunctions {
 
     //region ------------------- GETTERS/SETTERS  -------------------
 
-    public function getMainTableName() {
-        if ($this->_mainTableName == null) {
-            $method = new \ReflectionMethod($this->modelClass, 'tableName');
+    public function getMainTableName(): string {
+        if ($this->_mainTableName === null) {
+            $method = new ReflectionMethod($this->modelClass, 'tableName');
             $this->_mainTableName = $method->invoke(null);
         }
 
         return $this->_mainTableName;
     }
 
-    public function setMainTableName($mainTableName) {
+    public function setMainTableName(string $mainTableName): void {
         $this->_mainTableName = $mainTableName;
     }
 
-    public function getAlias() {
+    public function getAlias(): ?string {
         if ($this->_alias === null) {
             $this->_alias = $this->getMainTableName();
         }

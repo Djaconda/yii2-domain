@@ -2,6 +2,7 @@
 
 namespace PHPKitchen\Domain\DB;
 
+use Iterator;
 use PHPKitchen\Domain\Base\MagicObject;
 use PHPKitchen\Domain\Contracts;
 use yii\db\BatchQueryResult;
@@ -12,8 +13,8 @@ use yii\db\BatchQueryResult;
  * @package PHPKitchen\Domain\DB
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
-class SearchResult extends MagicObject implements \Iterator {
-    private $_queryResultIterator;
+class SearchResult extends MagicObject implements Iterator {
+    private BatchQueryResult $_queryResultIterator;
     /**
      * @var Base\Repository|Contracts\Repository
      */
@@ -28,7 +29,7 @@ class SearchResult extends MagicObject implements \Iterator {
     public function current() {
         $iterator = $this->getQueryResultIterator();
         $value = $iterator->current();
-        if ($iterator->each && $value instanceof Contracts\Record) {
+        if ($iterator->each && $value instanceof Contracts\EntityDataSource) {
             $entity = $this->getRepository()->createEntityFromSource($value);
         } elseif (!$iterator->each) {
             foreach ($value as $record) {
@@ -41,7 +42,7 @@ class SearchResult extends MagicObject implements \Iterator {
         return $entity;
     }
 
-    public function next() {
+    public function next(): void {
         $this->getQueryResultIterator()->next();
     }
 
@@ -49,23 +50,23 @@ class SearchResult extends MagicObject implements \Iterator {
         return $this->getQueryResultIterator()->key();
     }
 
-    public function valid() {
+    public function valid(): bool {
         return $this->getQueryResultIterator()->valid();
     }
 
-    public function rewind() {
+    public function rewind(): void {
         $this->getQueryResultIterator()->rewind();
     }
 
-    protected function getQueryResultIterator() {
+    protected function getQueryResultIterator(): BatchQueryResult {
         return $this->_queryResultIterator;
     }
 
-    public function getRepository() {
+    public function getRepository(): Contracts\Repository {
         return $this->_repository;
     }
 
-    public function setRepository($repository) {
+    public function setRepository(Contracts\Repository $repository): void {
         $this->_repository = $repository;
     }
 }

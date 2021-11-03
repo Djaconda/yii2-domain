@@ -2,18 +2,22 @@
 
 namespace PHPKitchen\Domain\Web\Base\Mixins;
 
+use PHPKitchen\DI\Container;
+use PHPKitchen\Domain\DB\EntitiesRepository;
+use yii\web\Controller;
+
 /**
  * Mixin that provides properties and methods to work with DB repository.
  *
  * Own properties:
  *
- * @property \PHPKitchen\Domain\DB\EntitiesRepository $repository
+ * @property EntitiesRepository $repository
  *
  * Globally available properties:
- * @property \PHPKitchen\DI\Container $container
+ * @property Container $container
  *
  * Parent properties:
- * @property \PHPKitchen\Domain\Contracts\EntityCrudController|\yii\web\Controller $controller
+ * @property Controller $controller
  *
  * @uses SessionMessagesManagement
  * @uses ResponseManagement
@@ -21,9 +25,9 @@ namespace PHPKitchen\Domain\Web\Base\Mixins;
  * @package PHPKitchen\Domain\Web\Base\Mixins
  */
 trait EntityActionHooks {
-    public $failToSaveErrorFlashMessage = 'Unable to save entity';
-    public $validationFailedFlashMessage = 'Please correct errors.';
-    public $successFlashMessage = 'Changes successfully saved.';
+    public string $failToSaveErrorFlashMessage = 'Unable to save entity';
+    public string $validationFailedFlashMessage = 'Please correct errors.';
+    public string $successFlashMessage = 'Changes successfully saved.';
 
     abstract protected function printView();
 

@@ -2,26 +2,32 @@
 
 namespace PHPKitchen\Domain\Web\Base\Mixins;
 
+use PHPKitchen\DI\Container;
+use yii\base\Application;
+use yii\di\ServiceLocator;
+use yii\web\Controller;
+use yii\web\Session;
+
 /**
  * Mixin that provides properties and methods to work with session messages
  *
  * Own properties:
- * @property \yii\web\Session $session
+ *
+ * @property Session $session
  *
  * Globally available properties:
- * @property \PHPKitchen\DI\Container $container
- * @property \yii\di\ServiceLocator|\yii\base\Application $serviceLocator
+ * @property Container $container
+ * @property ServiceLocator|Application $serviceLocator
  *
  * Parent properties:
- * @property \PHPKitchen\Domain\Contracts\EntityCrudController|\yii\web\Controller $controller
+ * @property Controller $controller
  *
  * @package PHPKitchen\Domain\Web\Base\Mixins
  */
 trait SessionMessagesManagement {
-    public $useFlashMessages = true;
-    public $successFlashMessageKey = 'success';
-    public $errorFlashMessageKey = 'error';
-
+    public bool $useFlashMessages = true;
+    public string $successFlashMessageKey = 'success';
+    public string $errorFlashMessageKey = 'error';
 
     public function addErrorFlash($message): void {
         $this->setFlash([$this->errorFlashMessageKey => $message]);
@@ -30,6 +36,7 @@ trait SessionMessagesManagement {
     public function addSuccessFlash($message): void {
         $this->setFlash([$this->successFlashMessageKey => $message]);
     }
+
     /**
      * Sets a flash message.
      *
@@ -47,19 +54,19 @@ trait SessionMessagesManagement {
      * }
      * ```
      *
-     * @param array $params extra params for the message parsing in format: key => value.
+     * @param array|null $params extra params for the message parsing in format: key => value.
      */
-    public function setFlash($message, $params = []): void {
+    public function setFlash($message, ?array $params = []): void {
         if (!$this->useFlashMessages || empty($message)) {
             return;
         }
         $session = $this->session;
         foreach ((array)$message as $key => $value) {
             if (is_scalar($value)) {
-                $value = preg_replace_callback("/{(\\w+)}/", function ($matches) use ($params) {
+                $value = preg_replace_callback("/{(\\w+)}/", static function ($matches) use ($params) {
                     $paramName = $matches[1];
 
-                    return isset($params[$paramName]) ? $params[$paramName] : $paramName;
+                    return $params[$paramName] ?? $paramName;
                 }, $value);
             } else {
                 $value = call_user_func($value, $params);
@@ -73,10 +80,9 @@ trait SessionMessagesManagement {
     }
 
     /**
-     * @return \yii\web\Session
+     * @return Session
      */
-    protected function getSession() {
+    protected function getSession(): Session {
         return $this->serviceLocator->session;
     }
-
 }

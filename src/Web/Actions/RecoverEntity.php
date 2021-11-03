@@ -2,10 +2,14 @@
 
 namespace PHPKitchen\Domain\Web\Actions;
 
+use PHPKitchen\Domain\Contracts\DomainEntity;
 use PHPKitchen\Domain\Contracts\RecoverableRepository;
 use PHPKitchen\Domain\Exceptions\UnableToSaveEntityException;
 use PHPKitchen\Domain\Web\Base\Action;
 use PHPKitchen\Domain\Web\Mixins\ModelSearching;
+use yii\base\InvalidConfigException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * Represents entity recovering process.
@@ -15,34 +19,35 @@ use PHPKitchen\Domain\Web\Mixins\ModelSearching;
  */
 class RecoverEntity extends Action {
     use ModelSearching;
-    public $failedToRecoverFlashMessage = 'Unable to recover entity';
-    public $successfullyRecoveredFlashMessage = 'Entity successfully recovered';
-    public $redirectUrl;
-    public $recoveredListFieldName = 'restored-ids';
 
-    public function init() {
+    /** @var string|array|callable a url to redirect to a next page. */
+    public $redirectUrl;
+    public string $failedToRecoverFlashMessage = 'Unable to recover entity';
+    public string $successfullyRecoveredFlashMessage = 'Entity successfully recovered';
+    public string $recoveredListFieldName = 'restored-ids';
+
+    public function init(): void {
         $this->setViewFileIfNotSetTo('list');
     }
 
     /**
      * @param int|null $id
      *
-     * @return \yii\web\Response
-     * @throws \yii\web\NotFoundHttpException
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
-    public function run($id = null) {
+    public function run(?int $id = null): Response {
         $ids = ($id) ? [$id] : $this->serviceLocator->request->post($this->recoveredListFieldName, []);
 
         $savedResults = [];
-        foreach ($ids as $id) {
-            $entity = $this->findEntityByIdentifierOrFail($id);
+        foreach ($ids as $_id) {
+            $entity = $this->findEntityByIdentifierOrFail($_id);
             $savedResults[] = $this->tryToRecoverEntity($entity);
         }
 
-        $savedNotSuccessfully = array_filter($savedResults, function ($value) {
-            return !$value;
-        });
-        if ($savedNotSuccessfully) {
+        $savedNotSuccessfully = array_filter($savedResults, fn($value) => !$value);
+        if ($savedNotSuccessfully !== []) {
             $this->addErrorFlash($this->failedToRecoverFlashMessage);
         } else {
             $this->addSuccessFlash($this->successfullyRecoveredFlashMessage);
@@ -51,7 +56,7 @@ class RecoverEntity extends Action {
         return $this->redirectToNextPage();
     }
 
-    protected function tryToRecoverEntity($entity) {
+    protected function tryToRecoverEntity(DomainEntity $entity): bool {
         $repository = $this->repository;
         try {
             if ($repository instanceof RecoverableRepository) {
@@ -67,7 +72,7 @@ class RecoverEntity extends Action {
     }
 
     // @todo fix duplicate with EntityModificationAction
-    protected function redirectToNextPage() {
+    protected function redirectToNextPage(): Response {
         if (null === $this->redirectUrl) {
             $redirectUrl = ['list'];
         } elseif (is_callable($this->redirectUrl)) {

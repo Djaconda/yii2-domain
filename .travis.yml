@@ -2,8 +2,8 @@ language: php
 
 matrix:
   include:
-    - php: 7.1
-    - php: 7.2
+    - php: 7.4
+    - php: 8.0
   fast_finish: true
 
 # faster builds on new travis setup not using sudo
@@ -24,4 +24,4 @@ before_script:
   - mkdir -p build/logs
 
 script:
- - php vendor/bin/phpunit --configuration specs/phpunit.xml --coverage-clover build/logs/clover.xml specs
+  - php vendor/bin/phpunit --configuration specs/phpunit.xml --coverage-clover build/logs/clover.xml specs

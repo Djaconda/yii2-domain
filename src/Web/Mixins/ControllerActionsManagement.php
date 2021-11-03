@@ -11,17 +11,17 @@ use yii\helpers\ArrayHelper;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 trait ControllerActionsManagement {
-    private $_actions = [];
+    private array $_actions = [];
 
-    public function actions() {
+    public function actions(): array {
         return $this->_actions;
     }
 
-    protected function addAction($name, $definition) {
+    protected function addAction(string $name, $definition): void {
         $this->_actions[$name] = $definition;
     }
 
-    protected function updateActionDefinition($name, $definition) {
+    protected function updateActionDefinition(string $name, $definition): void {
         if (is_string($definition) || is_object($definition)) {
             $this->_actions[$name] = $definition;
         } elseif (is_array($definition)) {
@@ -33,15 +33,15 @@ trait ControllerActionsManagement {
         }
     }
 
-    protected function removeAction($name) {
+    protected function removeAction(string $name): void {
         unset($this->_actions[$name]);
     }
 
-    protected function isDynamicActionDefined($name) {
+    protected function isDynamicActionDefined(string $name): bool {
         return isset($this->_actions[$name]);
     }
 
-    protected function setActions(array $actions) {
+    protected function setActions(array $actions): void {
         $this->_actions = $actions;
     }
 }

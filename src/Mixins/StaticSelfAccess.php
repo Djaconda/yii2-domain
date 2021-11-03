@@ -2,6 +2,9 @@
 
 namespace PHPKitchen\Domain\Mixins;
 
+use PHPKitchen\Domain\Base\Component;
+use Yii;
+
 /**
  * Represents
  *
@@ -10,9 +13,9 @@ namespace PHPKitchen\Domain\Mixins;
  */
 trait StaticSelfAccess {
     /**
-     * @return \PHPKitchen\Domain\Base\Component[]
+     * @return Component[]
      */
-    protected static $_instances = [];
+    protected static array $_instances = [];
 
     /**
      * @return $this
@@ -26,6 +29,6 @@ trait StaticSelfAccess {
     }
 
     protected static function initializeInstance() {
-        static::$_instances[static::class] = \Yii::$container->create(static::class);
+        static::$_instances[static::class] = Yii::$container->create(static::class);
     }
 }

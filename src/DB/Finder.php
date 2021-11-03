@@ -12,14 +12,8 @@ use PHPKitchen\Domain\Contracts;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class Finder extends MagicObject {
-    /**
-     * @var RecordQuery
-     */
-    private $_query;
-    /**
-     * @var EntitiesRepository
-     */
-    private $_repository;
+    private Contracts\Specification $_query;
+    private Contracts\Repository $_repository;
 
     public function __construct(Contracts\Specification $query, Contracts\Repository $repository, $config = []) {
         $this->_query = $query;
@@ -31,7 +25,7 @@ class Finder extends MagicObject {
         return $this->getQuery()->asArray();
     }
 
-    public function all() {
+    public function all(): array {
         $queryResult = $this->getQuery()->all();
         $entities = [];
         foreach ($queryResult as $key => $record) {
@@ -66,7 +60,7 @@ class Finder extends MagicObject {
     }
 
     protected function createEntityFromRecord($record) {
-        if ($record instanceof Contracts\Record) {
+        if ($record instanceof Contracts\EntityDataSource) {
             $entity = $this->getRepository()->createEntityFromSource($record);
         } else {
             $entity = $record;
@@ -90,11 +84,14 @@ class Finder extends MagicObject {
         return $result;
     }
 
+    /**
+     * @return Contracts\Specification|RecordQuery
+     */
     public function getQuery() {
         return $this->_query;
     }
 
-    protected function getRepository() {
+    protected function getRepository(): Contracts\Repository {
         return $this->_repository;
     }
 }

@@ -6,12 +6,11 @@
 
 ### What do you get instead?
 
-
 ### Additional info
 
 | Question             | Answer
 | -------------------- | ---
-| Yii2Domain version   | 
-| PHP version          | 
-| Yii version          | 
+| Yii2Domain version   |
+| PHP version          |
+| Yii version          |
 | Operating system     | 

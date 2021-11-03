@@ -20,7 +20,7 @@ class ProfileRecord extends Record {
      * @override
      * @inheritdoc
      */
-    public static function tableName() {
+    public static function tableName(): string {
         return 'UserProfile';
     }
 
@@ -28,7 +28,7 @@ class ProfileRecord extends Record {
      * @override
      * @inheritdoc
      */
-    public function rules() {
+    public function rules(): array {
         return [
             [
                 [

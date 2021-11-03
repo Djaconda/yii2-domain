@@ -11,9 +11,9 @@ use PHPKitchen\Domain\DB\EntitiesRepository;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class UserRepository extends EntitiesRepository {
-    public function init() {
+    public function init(): void {
         $this->on(self::EVENT_BEFORE_SAVE, function () {
-            $this->log('here we can handle events');
+            $this->logInfo('here we can handle events');
         });
     }
 }

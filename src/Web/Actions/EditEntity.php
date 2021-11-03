@@ -3,6 +3,7 @@
 namespace PHPKitchen\Domain\Web\Actions;
 
 use PHPKitchen\Domain\Web\Base\EntityModificationAction;
+use yii\web\Response;
 
 /**
  * Represents entity modify process.
@@ -11,19 +12,24 @@ use PHPKitchen\Domain\Web\Base\EntityModificationAction;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class EditEntity extends EntityModificationAction {
-    protected $entityId;
+    protected int $entityId;
 
-    public function init() {
+    public function init(): void {
         $this->setViewFileIfNotSetTo('edit');
     }
 
-    public function run($id) {
+    /**
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function run(int $id) {
         $this->entityId = $id;
 
         return $this->loadModelAndSaveOrPrintView();
     }
 
-    protected function initModel() {
+    protected function initModel(): void {
         $entity = $this->findEntityByIdentifierOrFail($this->entityId);
         $this->_model = $this->createViewModel($entity);
         $this->_model->loadAttributesFromEntity();

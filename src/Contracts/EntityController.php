@@ -2,21 +2,20 @@
 
 namespace PHPKitchen\Domain\Contracts;
 
+use PHPKitchen\Domain\DB\EntitiesRepository;
+
 /**
  * Represents entities controller.
  *
- * @property \PHPKitchen\Domain\DB\EntitiesRepository $repository
+ * @property EntitiesRepository $repository
  *
  * @package PHPKitchen\Domain\Contracts
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 interface EntityController {
-    /**
-     * @return \PHPKitchen\Domain\DB\EntitiesRepository
-     */
-    public function getRepository();
+    public function getRepository(): Repository;
 
     public function setRepository(Repository $repository);
 
-    public function findEntityByPk($pk);
+    public function findEntityByPk($pk): DomainEntity;
 }

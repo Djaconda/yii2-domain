@@ -12,11 +12,8 @@ use yii\base\Event;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class ModelEvent extends Event {
-    /**
-     * @var DomainEntity
-     */
-    protected $_entity;
-    protected $_valid = true;
+    protected DomainEntity $_entity;
+    protected bool $_valid = true;
 
     public function __construct(DomainEntity $entity, $config = []) {
         $this->_entity = $entity;

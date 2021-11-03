@@ -17,7 +17,7 @@ interface LoggerAware {
      * @param string $message the message to be logged.
      * @param string $category the category of the message.
      */
-    public function logInfo($message, $category = '');
+    public function logInfo(string $message, string $category = ''): void;
 
     /**
      * Logs a warning message.
@@ -27,7 +27,7 @@ interface LoggerAware {
      * @param string $message the message to be logged.
      * @param string $category the category of the message.
      */
-    public function logWarning($message, $category = '');
+    public function logWarning(string $message, string $category = ''): void;
 
     /**
      * Logs an error message.
@@ -37,7 +37,7 @@ interface LoggerAware {
      * @param string $message the message to be logged.
      * @param string $category the category of the message.
      */
-    public function logError($message, $category = '');
+    public function logError(string $message, string $category = ''): void;
 
     /**
      * Marks the beginning of a code block for profiling.
@@ -58,7 +58,7 @@ interface LoggerAware {
      *
      * @see endProfile()
      */
-    public function beginProfile($token, $category = '');
+    public function beginProfile(string $token, string $category = ''): void;
 
     /**
      * Marks the end of a code block for profiling.
@@ -69,7 +69,7 @@ interface LoggerAware {
      *
      * @see beginProfile()
      */
-    public function endProfile($token, $category = '');
+    public function endProfile(string $token, string $category = ''): void;
 
     /**
      * Logs a trace message.
@@ -79,5 +79,5 @@ interface LoggerAware {
      * @param string $message the message to be logged.
      * @param string $category the category of the message.
      */
-    public function trace($message, $category = '');
+    public function trace(string $message, string $category = ''): void;
 }

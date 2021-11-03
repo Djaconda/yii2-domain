@@ -1,33 +1,35 @@
 <?php
 
-
 namespace PHPKitchen\Domain\Web\Base\Mixins;
 
-
+use PHPKitchen\DI\Container;
+use PHPKitchen\Domain\Contracts\Repository;
 use PHPKitchen\Domain\DB\EntitiesRepository;
 use yii\base\InvalidArgumentException;
+use yii\web\Controller;
 
 /**
  * Mixin that provides properties and methods to work with DB repository.
  *
  * Own properties:
- * @property \PHPKitchen\Domain\DB\EntitiesRepository $repository
+ *
+ * @property EntitiesRepository $repository
  *
  * Globally available properties:
- * @property \PHPKitchen\DI\Container $container
+ * @property Container $container
  *
  * Parent properties:
- * @property \PHPKitchen\Domain\Contracts\EntityCrudController|\yii\web\Controller $controller
+ * @property Controller $controller
  *
  * @package PHPKitchen\Domain\Web\Base\Mixins
  */
 trait RepositoryAccess {
     /**
-     * @var \PHPKitchen\Domain\DB\EntitiesRepository DB repository.
+     * @var null|EntitiesRepository DB repository.
      */
-    private $_repository;
+    private ?EntitiesRepository $_repository = null;
 
-    public function getRepository(): EntitiesRepository {
+    public function getRepository(): Repository {
         if (null === $this->_repository) {
             // fallback to support old approach with defining repositories in controllers
             $this->_repository = $this->controller->repository ?? null;
@@ -53,6 +55,6 @@ trait RepositoryAccess {
     }
 
     protected function isObjectValidRepository($object): bool {
-        return is_object($object) && $object instanceof EntitiesRepository;
+        return $object instanceof EntitiesRepository;
     }
 }

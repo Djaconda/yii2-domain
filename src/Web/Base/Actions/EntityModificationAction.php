@@ -2,13 +2,11 @@
 
 namespace PHPKitchen\Domain\Web\Base\Actions;
 
-use PHPKitchen\Domain\Contracts\ResponseHttpStatus;
 use PHPKitchen\Domain\Exceptions\UnableToSaveEntityException;
-use PHPKitchen\Domain\Web\Base\Mixins\ResponseManagement;
 use PHPKitchen\Domain\Web\Base\Mixins\EntityActionHooks;
-use PHPKitchen\Domain\Web\Base\Mixins\SessionMessagesManagement;
 use PHPKitchen\Domain\Web\Mixins\ModelSearching;
 use PHPKitchen\Domain\Web\Mixins\ViewModelManagement;
+use yii\base\Model;
 
 /**
  * Represents a base class for all actions that modify entity.
@@ -20,14 +18,12 @@ abstract class EntityModificationAction extends Action {
     use ViewModelManagement;
     use ModelSearching;
     use EntityActionHooks;
+
     /**
      * @var int indicates whether to throw exception or handle it
      */
     public $throwExceptions = false;
-    /**
-     * @var \PHPKitchen\Domain\Web\Base\ViewModel;
-     */
-    protected $_model;
+    protected ?Model $_model = null;
 
     public function __construct($id, $controller, $config = []) {
         $this->defaultRedirectUrlAction = 'edit';
@@ -53,17 +49,11 @@ abstract class EntityModificationAction extends Action {
             : $this->handleFailedOperation();
     }
 
-    protected function validateModelAndTryToSaveEntity() {
-        if ($this->getModel()->validate()) {
-            $result = $this->tryToSaveEntity();
-        } else {
-            $result = false;
-        }
-
-        return $result;
+    protected function validateModelAndTryToSaveEntity(): bool {
+        return $this->getModel()->validate() && $this->tryToSaveEntity();
     }
 
-    protected function tryToSaveEntity() {
+    protected function tryToSaveEntity(): bool {
         $model = $this->getModel();
         $entity = $model->convertToEntity();
         try {
@@ -72,7 +62,7 @@ abstract class EntityModificationAction extends Action {
             $model->loadAttributesFromEntity();
         } catch (UnableToSaveEntityException $e) {
             $savedSuccessfully = false;
-            if ($this->throwExceptions) {
+            if ($this->throwExceptions !== 0) {
                 throw $e;
             }
         }
@@ -95,7 +85,7 @@ abstract class EntityModificationAction extends Action {
      *
      * @return array url definition;
      */
-    protected function prepareDefaultRedirectUrl() {
+    protected function prepareDefaultRedirectUrl(): array {
         $entity = $this->getModel()->convertToEntity();
 
         return [$this->defaultRedirectUrlAction, 'id' => $entity->id];
@@ -111,7 +101,7 @@ abstract class EntityModificationAction extends Action {
         return call_user_func($this->redirectUrl, $entity, $this);
     }
 
-    public function getModel() {
+    public function getModel(): Model {
         if (null === $this->_model) {
             $this->initModel();
         }

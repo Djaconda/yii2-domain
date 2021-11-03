@@ -14,7 +14,7 @@ class RecoverableEntitiesListModel extends ListingModel {
     /**
      * Override this method
      *
-     * @return \PHPKitchen\Domain\Data\EntitiesProvider
+     * @return EntitiesProvider
      */
     public function getDeletedDataProvider(): EntitiesProvider {
         $provider = $this->getDataProvider();

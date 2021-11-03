@@ -14,9 +14,9 @@ use yii\log\Logger as BaseLogger;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class Logger extends BaseLogger {
-    public $defaultTraceLevel = 7;
+    public int $defaultTraceLevel = 7;
 
-    public function logWithTrace($message, $level, $category = 'application') {
+    public function logWithTrace(string $message, int $level, ?string $category = 'application'): void {
         if (!$this->traceLevel && $this->defaultTraceLevel) {
             $oldTraceLevel = $this->traceLevel;
             $this->traceLevel = $this->defaultTraceLevel;

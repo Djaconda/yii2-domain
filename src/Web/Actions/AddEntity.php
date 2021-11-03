@@ -11,7 +11,7 @@ use PHPKitchen\Domain\Web\Base\EntityModificationAction;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class AddEntity extends EntityModificationAction {
-    public function init() {
+    public function init(): void {
         $this->setViewFileIfNotSetTo('add');
     }
 
@@ -19,7 +19,7 @@ class AddEntity extends EntityModificationAction {
         return $this->loadModelAndSaveOrPrintView();
     }
 
-    protected function initModel() {
+    protected function initModel(): void {
         $this->_model = $this->createNewModel();
     }
 }

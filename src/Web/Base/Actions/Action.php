@@ -6,14 +6,14 @@ use PHPKitchen\DI\Contracts\ContainerAware;
 use PHPKitchen\DI\Contracts\ServiceLocatorAware;
 use PHPKitchen\DI\Mixins\ContainerAccess;
 use PHPKitchen\DI\Mixins\ServiceLocatorAccess;
-
 use PHPKitchen\Domain\Contracts\ResponseHttpStatus;
-use PHPKitchen\Domain\Web\Base\Mixins\ResponseManagement;
 use PHPKitchen\Domain\Web\Base\Mixins\RepositoryAccess;
+use PHPKitchen\Domain\Web\Base\Mixins\ResponseManagement;
 use PHPKitchen\Domain\Web\Base\Mixins\SessionMessagesManagement;
 use PHPKitchen\Domain\Web\Contracts\RepositoryAware;
-
 use yii\helpers\Inflector;
+use yii\web\Request;
+use yii\web\Response;
 
 /**
  * Represents a base class for all controller actions that utilize Yii2Domain features.
@@ -23,8 +23,7 @@ use yii\helpers\Inflector;
  * @property int $requestStatusCore
  *
  * Base properties:
- * @property \PHPKitchen\Domain\Contracts\EntityCrudController|\yii\web\Controller $controller
- * @property \yii\web\Request $request
+ * @property Request $request
  *
  * @package PHPKitchen\Domain\Web\Base
  * @author Dmitry Kolodko <prowwid@gmail.com>
@@ -35,10 +34,11 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
     use RepositoryAccess;
     use SessionMessagesManagement;
     use ResponseManagement;
+
     /**
      * @var string name of the view, which should be rendered
      */
-    public $viewFile;
+    public string $viewFile;
     /**
      * @var callable callback that prepares params for a view. Use it to extend default view params list.
      */
@@ -47,11 +47,11 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      * @var bool defines whether an action can be rendered or it just process request without printing any HTML and should
      * redirect to a next page using {@link redirectUrl}.
      */
-    public $printable = true;
+    public bool $printable = true;
     /**
      * @var string default action to redirect using {@link redirectToNextPage}
      */
-    protected $defaultRedirectUrlAction = 'index';
+    protected string $defaultRedirectUrlAction = 'index';
 
     /**
      * Checks whether action with specified ID exists in owner controller.
@@ -60,21 +60,22 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      *
      * @return boolean whether action exists or not.
      */
-    protected function isActionExistsInController($id): bool {
+    protected function isActionExistsInController(string $id): bool {
         $inlineActionMethodName = 'action' . Inflector::camelize($id);
 
-        return $this->controller->hasMethod($inlineActionMethodName) || array_key_exists($id, $this->controller->actions());
+        return $this->controller->hasMethod($inlineActionMethodName) || array_key_exists($id,
+                $this->controller->actions());
     }
 
-    protected function setViewFileIfNotSetTo($file) {
-        $this->viewFile = isset($this->viewFile) ? $this->viewFile : $file;
+    protected function setViewFileIfNotSetTo($file): void {
+        $this->viewFile ??= $file;
     }
 
     /**
      * Prints page view file defined at {@link viewFile}.
      * Params being passed to view from {@link prepareViewContext} and {@link getDefaultViewParams}
      *
-     * @return string the rendering result.
+     * @return string|Response the rendering result.
      */
     protected function printView() {
         return $this->printable ? $this->renderViewFile([]) : $this->redirectToNextPage();
@@ -83,13 +84,12 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
     /**
      * Renders a view defined at {@link viewFile} and applies layout if available.
      *
-     *
      * @param array $params the parameters (name-value pairs) that should be made available in the view.
      * Params are extended by {@link prepareViewContext} and {@link getDefaultViewParams}
      *
      * @return string the rendering result.
      */
-    protected function renderViewFile($params = []) {
+    protected function renderViewFile(array $params = []) {
         return $this->controller->render($this->viewFile, $this->prepareParamsForViewFile($params));
     }
 
@@ -103,7 +103,7 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      *
      * @return string the rendering result.
      */
-    protected function renderViewFileForAjax($params = []) {
+    protected function renderViewFileForAjax(array $params = []): string {
         return $this->controller->renderAjax($this->viewFile, $this->prepareParamsForViewFile($params));
     }
 
@@ -111,11 +111,11 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      * Prepares params for {@link viewFile} extending them wit the ones defined by {@link prepareViewContext}
      * and {@link getDefaultViewParams}.
      *
-     * @param $params name-value pairs
+     * @param array $params name-value pairs
      *
      * @return array parameters (name-value pairs)
      */
-    protected function prepareParamsForViewFile($params): array {
+    protected function prepareParamsForViewFile(array $params): array {
         $viewParams = array_merge($this->prepareViewContext(), $this->getDefaultViewParams());
         $viewParams = array_merge($viewParams, $params);
         if (is_callable($this->prepareViewParams)) {
@@ -133,7 +133,7 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      *
      * @return string the rendering result.
      */
-    protected function renderFile($params = []) {
+    protected function renderFile(array $params = []): string {
         $params = array_merge($this->prepareViewContext(), $params);
 
         return $this->controller->renderFile($this->viewFile, $params);
@@ -147,7 +147,7 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      *
      * @return string the rendering result.
      */
-    protected function renderPartial($params = []) {
+    protected function renderPartial(array $params = []): string {
         $params = array_merge($this->prepareViewContext(), $params);
 
         return $this->controller->renderPartial($this->viewFile, $params);
@@ -166,7 +166,7 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      *
      * @return string the rendering result.
      */
-    protected function renderAjax($params = []) {
+    protected function renderAjax(array $params = []): string {
         $params = array_merge($this->prepareViewContext(), $params);
 
         return $this->controller->renderAjax($this->viewFile, $params);
@@ -200,12 +200,12 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      *
      * @return array url definition;
      */
-    protected function prepareDefaultRedirectUrl() {
+    protected function prepareDefaultRedirectUrl(): array {
         return [$this->defaultRedirectUrlAction];
     }
 
     /**
-     * @return mixed|\yii\console\Request|\yii\web\Request
+     * @return mixed|\yii\console\Request|Request
      */
     protected function getRequest() {
         return $this->serviceLocator->request;

@@ -5,17 +5,17 @@ This release concentrated on a refactoring of  `PHPKitchen\Domain\Web\Base` name
 ## BC BREAKS
 
 Reorganized `PHPKitchen\Domain\Web\Base` namespace.
-- `Action` moved to `PHPKitchen\Domain\Web\Base\Actions` 
-- `EntityModificationAction` moved to `PHPKitchen\Domain\Web\Base\Actions` 
-- `ListingModel` moved to `PHPKitchen\Domain\Web\Base\Models` 
-- `RecoverableEntitiesListModel` moved to `PHPKitchen\Domain\Web\Base\Models` 
-- `ViewModel` moved to `PHPKitchen\Domain\Web\Base\Models` 
+- `Action` moved to `PHPKitchen\Domain\Web\Base\Actions`
+- `EntityModificationAction` moved to `PHPKitchen\Domain\Web\Base\Actions`
+- `ListingModel` moved to `PHPKitchen\Domain\Web\Base\Models`
+- `RecoverableEntitiesListModel` moved to `PHPKitchen\Domain\Web\Base\Models`
+- `ViewModel` moved to `PHPKitchen\Domain\Web\Base\Models`
 
 ## DEPRECATIONS
 
 To prevend immediate failure of existing applications, following classes are kept for temporarly BC compatibiity and maked as deprecated at  `PHPKitchen\Domain\Web\Base` namespace:
 - `Action`
-- `EntityModificationAction` 
+- `EntityModificationAction`
 - `ListingModel`
 - `RecoverableEntitiesListModel`
 - `ViewModel`

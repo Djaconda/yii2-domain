@@ -24,7 +24,7 @@ Includes realization of a following patterns:
 
 ## Requirements
 
-**`PHP >= 7.1` is required.**
+**`PHP >= 7.4` is required.**
 
 ## Getting Started
 
@@ -42,10 +42,10 @@ For additional information and guides go to the [project documentation](docs/REA
 
 ## Overview
 
-Goal of this library is to introduce Domain Driven Design(DDD) principles to Yii2 projects and to fix [ActiveRecord problem](http://www.mehdi-khalili.com/orm-anti-patterns-part-1-active-record) 
- of domain layer in applications with medium and large domain area.
+Goal of this library is to introduce Domain Driven Design(DDD) principles to Yii2 projects and to fix [ActiveRecord problem](http://www.mehdi-khalili.com/orm-anti-patterns-part-1-active-record)
+of domain layer in applications with medium and large domain area.
 
-Each model represented as a standalone directory that contains repository, entity, record and query classes. All of these 
+Each model represented as a standalone directory that contains repository, entity, record and query classes. All of these
 classes represent a domain model.
 
 DIRECTORY STRUCTURE OF A TYPICAL MODEL(AS EXAMPLE - USER MODEL)
@@ -56,7 +56,7 @@ DIRECTORY STRUCTURE OF A TYPICAL MODEL(AS EXAMPLE - USER MODEL)
             UserRecord         DB record that contains entity information
             ProfileRecord      DB record with additional information thta also a part of the UserEntity.
             UserQuery          query class of model e.g. - specification of the entity
- 
+
 
 ## Code examples
 
@@ -82,9 +82,9 @@ $repository->delete($entity);
 ```
 
 ## Note:
-this library is designed to solve [ActiveRecord problem](http://www.mehdi-khalili.com/orm-anti-patterns-part-1-active-record) of Yii 2. Don't use this library if you are starting a new project and looking for 
+this library is designed to solve [ActiveRecord problem](http://www.mehdi-khalili.com/orm-anti-patterns-part-1-active-record) of Yii 2. Don't use this library if you are starting a new project and looking for
 a solution that would allow you to build a decent architecture - you need a good framework that would allow you do build high-quality solution and Yii 2 is not
-a framework that would allow you to build high quality architecture and implement rich domain layer. 
+a framework that would allow you to build high quality architecture and implement rich domain layer.
 
 "Yii2Domain" library is a crutch designed to solve issues of domain layer caused by ActiveRecord in existing projects.
 There are few decent solutions to build domain layer in a new project:

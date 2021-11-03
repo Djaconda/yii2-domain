@@ -13,7 +13,7 @@ use PHPKitchen\Domain\Base\DataMapper;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 interface DomainEntity {
-    public function isNew();
+    public function isNew(): bool;
 
-    public function isNotNew();
+    public function isNotNew(): bool;
 }

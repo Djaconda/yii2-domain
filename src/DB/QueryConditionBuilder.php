@@ -12,25 +12,22 @@ use PHPKitchen\Domain\Contracts;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class QueryConditionBuilder extends MagicObject {
-    /**
-     * @var RecordQuery
-     */
-    protected $query;
-    private $_paramNamesCounters = [];
+    protected \PHPKitchen\Domain\Contracts\RecordQuery $query;
+    private array $_paramNamesCounters = [];
 
     public function __construct(Contracts\RecordQuery $query, $config = []) {
         $this->query = $query;
         parent::__construct($config);
     }
 
-    public function buildAliasedNameOfField($field, $alias = null) {
-        $alias = $alias ? $alias : $this->query->alias;
+    public function buildAliasedNameOfField($field, $alias = null): string {
+        $alias = $alias ?: $this->query->alias;
 
         return "[[$alias]].[[$field]]";
     }
 
-    public function buildAliasedNameOfParam($param, $alias = null) {
-        $alias = $alias ? $alias : $this->query->alias;
+    public function buildAliasedNameOfParam($param, $alias = null): string {
+        $alias = $alias ?: $this->query->alias;
         $paramName = ":{$alias}_{$param}";
         if ($this->isParamNameUsed($paramName)) {
             $index = $this->getParamNameNextIndexAndIncreaseCurrent($paramName);
@@ -42,15 +39,15 @@ class QueryConditionBuilder extends MagicObject {
         return $paramName;
     }
 
-    protected function isParamNameUsed($paramName) {
+    protected function isParamNameUsed(string $paramName): bool {
         return isset($this->_paramNamesCounters[$paramName]);
     }
 
-    protected function addParamNameToUsed($paramName) {
+    protected function addParamNameToUsed(string $paramName): void {
         $this->_paramNamesCounters[$paramName] = 0;
     }
 
-    protected function getParamNameNextIndexAndIncreaseCurrent($paramName) {
+    protected function getParamNameNextIndexAndIncreaseCurrent(string $paramName) {
         $this->_paramNamesCounters[$paramName]++;
 
         return $this->_paramNamesCounters[$paramName];

@@ -2,12 +2,15 @@
 
 namespace PHPKitchen\Domain\Web\Base\Mixins;
 
+use yii\web\Controller;
+use yii\web\Response;
+
 /**
  * Represent mixin that adds support for redirecting response to an another page.
  *
  * Parent properties:
  *
- * @property \PHPKitchen\Domain\Contracts\EntityCrudController|\yii\web\Controller $controller
+ * @property Controller $controller
  *
  * @package PHPKitchen\Domain\Web\Base\Mixins
  */
@@ -27,9 +30,9 @@ trait ResponseManagement {
     /**
      * Redirects to a next page based on URL defined at {@link redirectUrl} or defined by {@link redirectToNextPage}.
      *
-     * @return \yii\web\Response
+     * @return Response
      */
-    protected function redirectToNextPage() {
+    protected function redirectToNextPage(): Response {
         if (null === $this->redirectUrl) {
             $redirectUrl = $this->prepareDefaultRedirectUrl();
         } elseif (is_callable($this->redirectUrl)) {

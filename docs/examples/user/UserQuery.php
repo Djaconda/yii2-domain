@@ -11,11 +11,11 @@ use PHPKitchen\Domain\DB\RecordQuery;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class UserQuery extends RecordQuery {
-    public function active() {
+    public function active(): self {
         return $this->andWhere('status=:status', ['status' => UserEntity::STATUS_ACTIVE]);
     }
 
-    public function inactive() {
+    public function inactive(): self {
         return $this->andWhere('status=:status', ['status' => UserEntity::STATUS_INACTIVE]);
     }
 }

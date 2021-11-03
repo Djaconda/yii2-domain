@@ -2,6 +2,7 @@
 
 namespace PHPKitchen\Domain\DB;
 
+use Exception;
 use PHPKitchen\DI\Contracts\ContainerAware;
 use PHPKitchen\DI\Contracts\ServiceLocatorAware;
 use PHPKitchen\DI\Mixins\ContainerAccess;
@@ -11,6 +12,7 @@ use PHPKitchen\Domain\Contracts\EntityDataSource;
 use PHPKitchen\Domain\Contracts\LoggerAware;
 use PHPKitchen\Domain\Mixins\LoggerAccess;
 use PHPKitchen\Domain\Mixins\StaticSelfAccess;
+use Yii;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
 use yii\db\AfterSaveEvent;
@@ -26,26 +28,27 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
     use ServiceLocatorAccess;
     use ContainerAccess;
     use StaticSelfAccess;
+
     /**
      * @var bool flag that record was just inserted
      */
-    private $justAdded = false;
+    private bool $justAdded = false;
     /**
      * @var array attribute values that were changed after inser or update
      */
-    private $_changedAttributes = [];
+    private array $_changedAttributes = [];
     /**
      * @var EntitiesRepository[] repositories of related entities
      */
-    private $relatedRepositories = [];
+    private array $relatedRepositories = [];
 
-    public function init() {
+    public function init(): void {
         parent::init();
 
-        $this->on(static::EVENT_BEFORE_INSERT, [$this, 'markAsJustAdded']);
-        $this->on(static::EVENT_BEFORE_UPDATE, [$this, 'markAsJustUpdated']);
-        $this->on(static::EVENT_AFTER_INSERT, [$this, 'initChangedAttributes']);
-        $this->on(static::EVENT_AFTER_UPDATE, [$this, 'initChangedAttributes']);
+        $this->on(static::EVENT_BEFORE_INSERT, fn() => $this->markAsJustAdded());
+        $this->on(static::EVENT_BEFORE_UPDATE, fn() => $this->markAsJustUpdated());
+        $this->on(static::EVENT_AFTER_INSERT, fn(AfterSaveEvent $event) => $this->initChangedAttributes($event));
+        $this->on(static::EVENT_AFTER_UPDATE, fn(AfterSaveEvent $event) => $this->initChangedAttributes($event));
     }
 
     /**
@@ -53,7 +56,7 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
      * @inheritdoc
      */
     public static function instantiate($row) {
-        return \Yii::$container->create(static::class);
+        return Yii::$container->create(static::class);
     }
 
     /**
@@ -66,11 +69,11 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
     }
 
     /**
-     * @param $class
+     * @param string $class
      *
      * @return RecordQuery
      */
-    public function createQuery($class) {
+    public function createQuery(string $class): RecordQuery {
         /**
          * @var RecordQuery $finder
          */
@@ -80,31 +83,31 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
         return $finder;
     }
 
-    public function isNew() {
+    public function isNew(): bool {
         return $this->isNewRecord;
     }
 
-    public function isNotNew() {
+    public function isNotNew(): bool {
         return !$this->isNewRecord;
     }
 
-    public function canGetProperty($name, $checkVars = true, $checkBehaviors = true) {
+    public function canGetProperty($name, $checkVars = true, $checkBehaviors = true): bool {
         return $this->hasAttribute($name) || parent::canGetProperty($name, $checkVars, $checkBehaviors);
     }
 
-    public function canSetProperty($name, $checkVars = true, $checkBehaviors = true) {
+    public function canSetProperty($name, $checkVars = true, $checkBehaviors = true): bool {
         return $this->hasAttribute($name) || parent::canSetProperty($name, $checkVars, $checkBehaviors);
     }
 
-    public function setChangedAttributes(array $changedAttributes) {
+    public function setChangedAttributes(array $changedAttributes): void {
         $this->_changedAttributes = $changedAttributes;
     }
 
-    public function getChangedAttributes() {
+    public function getChangedAttributes(): array {
         return $this->_changedAttributes;
     }
 
-    public function getChangedAttribute($name) {
+    public function getChangedAttribute(string $name) {
         if ($this->wasAttributeChanged($name)) {
             return $this->_changedAttributes[$name];
         }
@@ -112,11 +115,11 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
         return false;
     }
 
-    public function wasAttributeChanged($name) {
+    public function wasAttributeChanged(string $name): bool {
         return (array_key_exists($name, $this->_changedAttributes));
     }
 
-    public function isJustAdded() {
+    public function isJustAdded(): bool {
         return $this->justAdded;
     }
 
@@ -138,17 +141,17 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
      * before saving the record. Defaults to `true`. If the validation fails, the record
      * will not be saved to the database and this method will return `false`.
      *
-     * @param array $attributeNames list of attribute names that need to be saved. Defaults to null,
+     * @param array|null $attributeNames list of attribute names that need to be saved. Defaults to null,
      * meaning all attributes that are loaded from DB will be saved.
      *
      * @return boolean whether the saving succeeded (i.e. no validation errors occurred).
      */
-    public function validateAndSave($attributeNames = null) {
+    public function validateAndSave(?array $attributeNames = null): bool {
         if ($this->getIsNewRecord()) {
             return $this->insert($runValidation = true, $attributeNames);
-        } else {
-            return $this->update($runValidation = true, $attributeNames) !== false;
         }
+
+        return $this->update($runValidation = true, $attributeNames) !== false;
     }
 
     /**
@@ -169,17 +172,17 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
      * before saving the record. Defaults to `true`. If the validation fails, the record
      * will not be saved to the database and this method will return `false`.
      *
-     * @param array $attributeNames list of attribute names that need to be saved. Defaults to null,
+     * @param array|null $attributeNames list of attribute names that need to be saved. Defaults to null,
      * meaning all attributes that are loaded from DB will be saved.
      *
      * @return boolean whether the saving succeeded (i.e. no validation errors occurred).
      */
-    public function saveWithoutValidation($attributeNames = null) {
+    public function saveWithoutValidation(array $attributeNames = null): bool {
         if ($this->getIsNewRecord()) {
             return $this->insert($runValidation = false, $attributeNames);
-        } else {
-            return $this->update($runValidation = false, $attributeNames) !== false;
         }
+
+        return $this->update($runValidation = false, $attributeNames) !== false;
     }
 
     /**
@@ -205,15 +208,15 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
         return parent::delete();
     }
 
-    protected function markAsJustAdded() {
+    protected function markAsJustAdded(): void {
         $this->justAdded = true;
     }
 
-    protected function markAsJustUpdated() {
+    protected function markAsJustUpdated(): void {
         $this->justAdded = false;
     }
 
-    protected function initChangedAttributes(AfterSaveEvent $event) {
+    protected function initChangedAttributes(AfterSaveEvent $event): void {
         $this->setChangedAttributes($event->changedAttributes);
     }
 
@@ -226,7 +229,7 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
      *
      * @return ActiveQueryInterface the relational query object.
      */
-    protected function createRelationQuery($class, $link, $multiple) {
+    protected function createRelationQuery($class, $link, $multiple): ActiveQueryInterface {
         $repository = $this->getRelatedRepository($byRecordClass = $class);
         if (!$repository) {
             return parent::createRelationQuery($class, $link, $multiple);
@@ -242,13 +245,13 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
     }
 
     /**
-     * @deprecated this method should use only for domestic purposes
-     *
      * @param EntitiesRepository $repository
      *
      * @return ActiveQueryInterface
+     * @deprecated this method should use only for domestic purposes
+     *
      */
-    protected function getQueryFromRepository($repository) {
+    protected function getQueryFromRepository(Contracts\Repository $repository): ActiveQueryInterface {
         return $repository->find()->getQuery();
     }
 
@@ -266,7 +269,7 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
         $container = $this->container;
         try {
             $repository = $repositoryClass ? $container->create($repositoryClass) : false;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $repository = false;
         }
         $this->relatedRepositories[$byRecordClass] = $repository;
