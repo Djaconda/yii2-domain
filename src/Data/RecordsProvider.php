@@ -18,10 +18,7 @@ use yii\data\ActiveDataProvider;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class RecordsProvider extends ActiveDataProvider {
-    /**
-     * @var EntitiesRepository|RecordsRepository
-     */
-    protected Contracts\Repository $_repository;
+    protected Contracts\Repository|EntitiesRepository $_repository;
 
     public function getRepository(): Contracts\Repository {
         return $this->_repository;

@@ -7,7 +7,7 @@ use PHPKitchen\Domain\Specs\Unit\Stubs\Models\Dummy\DummyEntity;
 use PHPKitchen\Domain\Specs\Unit\Stubs\Models\Dummy\DummyRepository;
 
 /**
- * Specification of {@link PHPKitchen\Domain\Base\Entity}
+ * Specification of {@link \PHPKitchen\Domain\Base\Entity}
  *
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
@@ -15,7 +15,7 @@ class EntitySpec extends Spec {
     /**
      * @test
      */
-    public function phpEmptyOnNullAttributeBehavior() {
+    public function phpEmptyOnNullAttributeBehavior(): void {
         $entity = $this->createEmptyEntity();
         $I = $this->tester;
 
@@ -29,7 +29,7 @@ class EntitySpec extends Spec {
     /**
      * @test
      */
-    public function phpEmptyOnFilledAttributeBehavior() {
+    public function phpEmptyOnFilledAttributeBehavior(): void {
         $entity = $this->createEmptyEntity();
         $I = $this->tester;
 

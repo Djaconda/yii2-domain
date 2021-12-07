@@ -21,7 +21,7 @@ class Record extends \PHPKitchen\Domain\DB\Record {
         ];
     }
 
-    public function save($runValidation = true, $attributes = null) {
+    public function save($runValidation = true, $attributeNames = null) {
         return $this->saveResult;
     }
 

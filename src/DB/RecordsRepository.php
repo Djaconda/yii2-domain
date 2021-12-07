@@ -4,6 +4,8 @@ namespace PHPKitchen\Domain\DB;
 
 use PHPKitchen\Domain;
 use PHPKitchen\Domain\Contracts;
+use Throwable;
+use yii\db\StaleObjectException;
 
 /**
  * Represents DB records repository.
@@ -19,7 +21,6 @@ abstract class RecordsRepository extends Base\Repository {
 
     //----------------------- ENTITY MANIPULATION METHODS -----------------------//
     /**
-     * @param Record|Contracts\DomainEntity $entity
      *
      * @return bool result.
      * @throws Domain\Exceptions\UnableToSaveEntityException
@@ -40,13 +41,13 @@ abstract class RecordsRepository extends Base\Repository {
             throw $exception;
         }
 
-        return $result;
+        return true;
     }
 
     /**
-     * @param Record|Contracts\DomainEntity $entity
-     *
      * @return bool result.
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function delete(Contracts\DomainEntity $entity): bool {
         $result = $this->triggerModelEvent(self::EVENT_BEFORE_DELETE, $entity) ? $entity->deleteRecord() : false;
@@ -58,8 +59,6 @@ abstract class RecordsRepository extends Base\Repository {
     }
 
     /**
-     * @param Record|Contracts\DomainEntity $entity
-     *
      * @return bool result.
      */
     public function validate(Contracts\DomainEntity $entity): bool {

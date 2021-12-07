@@ -13,7 +13,7 @@ use PHPKitchen\Domain\Specs\Unit\Stubs\Base\Record;
 class DummyRecord extends Record {
     public $id;
 
-    public function getPrimaryKey($asBool = false) {
+    public function getPrimaryKey($asArray = false) {
         return $this->id;
     }
 }

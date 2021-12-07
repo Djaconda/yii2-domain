@@ -2,7 +2,7 @@
 
 namespace PHPKitchen\Domain\Web\Actions;
 
-use PHPKitchen\Domain\Web\Base\EntityModificationAction;
+use PHPKitchen\Domain\Web\Base\Actions\EntityModificationAction;
 
 /**
  * Represents entity creation process.

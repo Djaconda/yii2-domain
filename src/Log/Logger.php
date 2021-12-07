@@ -20,10 +20,10 @@ class Logger extends BaseLogger {
         if (!$this->traceLevel && $this->defaultTraceLevel) {
             $oldTraceLevel = $this->traceLevel;
             $this->traceLevel = $this->defaultTraceLevel;
-            parent::log($message, $level, $category);
+            $this->log($message, $level, $category);
             $this->traceLevel = $oldTraceLevel;
         } else {
-            parent::log($message, $level, $category);
+            $this->log($message, $level, $category);
         }
     }
 }

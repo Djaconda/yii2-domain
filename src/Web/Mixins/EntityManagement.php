@@ -50,10 +50,10 @@ trait EntityManagement {
         return $this->_repository;
     }
 
-    public function setRepository($repository): void {
+    public function setRepository(string|array|Repository $repository): void {
         if (is_string($repository) || is_array($repository)) {
             $this->_repository = $this->container->create($repository);
-        } elseif (is_object($repository) && $repository instanceof Repository) {
+        } elseif ($repository instanceof Repository) {
             $this->_repository = $repository;
         } else {
             throw new InvalidConfigException('Repository should be a valid container config or an instance of ' . Repository::class);

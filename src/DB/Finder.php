@@ -4,6 +4,7 @@ namespace PHPKitchen\Domain\DB;
 
 use PHPKitchen\Domain\Base\MagicObject;
 use PHPKitchen\Domain\Contracts;
+use PHPKitchen\Domain\Contracts\Specification;
 
 /**
  * Represents
@@ -12,7 +13,7 @@ use PHPKitchen\Domain\Contracts;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class Finder extends MagicObject {
-    public function __construct(private Contracts\Specification $_query, private Contracts\Repository $_repository, $config = []) {
+    public function __construct(private Specification $_query, private Contracts\Repository $_repository, $config = []) {
         parent::__construct($config);
     }
 
@@ -79,9 +80,6 @@ class Finder extends MagicObject {
         return $result;
     }
 
-    /**
-     * @return Contracts\Specification|RecordQuery
-     */
     public function getQuery() {
         return $this->_query;
     }

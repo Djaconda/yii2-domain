@@ -16,9 +16,6 @@ use PHPKitchen\Domain\DB\EntitiesRepository;
  * @author Vladimir Siritsa <vladimir.siritsa@bitfocus.com>
  */
 interface RepositoryAware {
-    /**
-     * @return Repository|EntitiesRepository
-     */
     public function getRepository(): Repository;
 
     /**

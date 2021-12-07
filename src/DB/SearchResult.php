@@ -5,6 +5,7 @@ namespace PHPKitchen\Domain\DB;
 use Iterator;
 use PHPKitchen\Domain\Base\MagicObject;
 use PHPKitchen\Domain\Contracts;
+use PHPKitchen\Domain\Contracts\Repository;
 use yii\db\BatchQueryResult;
 
 /**
@@ -14,9 +15,9 @@ use yii\db\BatchQueryResult;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class SearchResult extends MagicObject implements Iterator {
-    private ?\PHPKitchen\Domain\Contracts\Repository $_repository = null;
+    private ?Repository $_repository = null;
 
-    public function __construct(private BatchQueryResult $_queryResultIterator, Contracts\Repository $repository, $config = []) {
+    public function __construct(private BatchQueryResult $_queryResultIterator, Repository $repository, $config = []) {
         $this->setRepository($repository);
         parent::__construct($config);
     }
@@ -57,11 +58,11 @@ class SearchResult extends MagicObject implements Iterator {
         return $this->_queryResultIterator;
     }
 
-    public function getRepository(): Contracts\Repository {
+    public function getRepository(): Repository {
         return $this->_repository;
     }
 
-    public function setRepository(Contracts\Repository $repository): void {
+    public function setRepository(Repository $repository): void {
         $this->_repository = $repository;
     }
 }

@@ -18,13 +18,13 @@ use PHPKitchen\Domain\Specs\Unit\Stubs\Models\Tmux\TmuxRepository;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class DataMapperTest extends Spec {
-    const DUMMY_RECORD_ID = 123;
+    public const DUMMY_RECORD_ID = 123;
     protected $record;
 
     /**
      * @test
      */
-    public function constructorBehavior() {
+    public function constructorBehavior(): void {
         $this->tester
             ->seeObject($this->createMapper())
             ->isInstanceOf(DataMapper::class);

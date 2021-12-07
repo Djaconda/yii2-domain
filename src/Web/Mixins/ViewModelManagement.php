@@ -4,8 +4,8 @@ namespace PHPKitchen\Domain\Web\Mixins;
 
 use PHPKitchen\DI\Mixins\ContainerAccess;
 use PHPKitchen\DI\Mixins\ServiceLocatorAccess;
-use PHPKitchen\Domain\Base\Entity;
-use PHPKitchen\Domain\Web\Base\ViewModel;
+use PHPKitchen\Domain\Contracts\DomainEntity;
+use PHPKitchen\Domain\Web\Base\Models\ViewModel;
 use yii\web\Controller;
 
 /**
@@ -28,18 +28,13 @@ trait ViewModelManagement {
      */
     public string $scenario = ViewModel::SCENARIO_DEFAULT;
 
-    protected function createNewModel() {
+    protected function createNewModel(): ViewModel {
         $entity = $this->getRepository()->createNewEntity();
 
         return $this->createViewModel($entity);
     }
 
-    /**
-     * @param Entity $entity
-     *
-     * @return ViewModel
-     */
-    protected function createViewModel($entity) {
+    protected function createViewModel(DomainEntity $entity): ViewModel {
         $model = $this->container->create([
             'class' => $this->getViewModelClassName(),
             'entity' => $entity,

@@ -58,7 +58,7 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      *
      * @param string $id action ID.
      *
-     * @return boolean whether action exists or not.
+     * @return bool whether action exists or not.
      */
     protected function isActionExistsInController(string $id): bool {
         $inlineActionMethodName = 'action' . Inflector::camelize($id);
@@ -77,7 +77,7 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      *
      * @return string|Response the rendering result.
      */
-    protected function printView() {
+    protected function printView(): string|Response {
         return $this->printable ? $this->renderViewFile([]) : $this->redirectToNextPage();
     }
 
@@ -87,9 +87,9 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      * @param array $params the parameters (name-value pairs) that should be made available in the view.
      * Params are extended by {@link prepareViewContext} and {@link getDefaultViewParams}
      *
-     * @return string the rendering result.
+     * @return string|Response the rendering result.
      */
-    protected function renderViewFile(array $params = []) {
+    protected function renderViewFile(array $params = []): string|Response {
         return $this->controller->render($this->viewFile, $this->prepareParamsForViewFile($params));
     }
 
@@ -101,9 +101,9 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      * @param array $params the parameters (name-value pairs) that should be made available in the view.
      * Params are extended by {@link prepareViewContext} and {@link getDefaultViewParams}
      *
-     * @return string the rendering result.
+     * @return string|Response the rendering result.
      */
-    protected function renderViewFileForAjax(array $params = []): string {
+    protected function renderViewFileForAjax(array $params = []): string|Response {
         return $this->controller->renderAjax($this->viewFile, $this->prepareParamsForViewFile($params));
     }
 
@@ -212,7 +212,7 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
     }
 
     protected function getRequestStatusCore(): int {
-        if ($this->request->isAjax) {
+        if ($this->request->getIsAjax()) {
             return ResponseHttpStatus::OK;
         }
 

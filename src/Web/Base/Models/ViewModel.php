@@ -33,7 +33,7 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
     use ContainerAccess;
     use ServiceLocatorAccess;
 
-    private ?\PHPKitchen\Domain\Contracts\DomainEntity $_entity = null;
+    private ?DomainEntity $_entity = null;
     /**
      * @var null|array Defines map of entity attributes required in {@link convertAttributesToEntityAttributes()}
      * Format of map:
@@ -46,13 +46,13 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
      * </pre>
      */
     private ?array $_entityAttributesMap = null;
-    private ?\yii\web\Controller $_controller = null;
+    private ?Controller $_controller = null;
 
     public function convertToEntity(): Entity {
         $defaultAttributes = $this->prepareDefaultEntityAttributes();
         $newAttributes = $this->convertToEntityAttributes();
         $entity = $this->getEntity();
-        $entity->load(ArrayHelper::merge($defaultAttributes, $newAttributes));
+        $entity?->load(ArrayHelper::merge($defaultAttributes, $newAttributes));
 
         return $entity;
     }
@@ -107,8 +107,8 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
         $entity = $this->getEntity();
         $attributes = [];
         foreach ($this->getEntityAttributesMap() as $modelAttribute => $formValue) {
-            if (is_string($formValue) && $this->canGetProperty($formValue) && $entity->canGetProperty($modelAttribute)) {
-                $attributes[$formValue] = $entity->$modelAttribute;
+            if (is_string($formValue) && $this->canGetProperty($formValue) && $entity?->canGetProperty($modelAttribute)) {
+                $attributes[$formValue] = $entity?->$modelAttribute;
             }
         }
 
