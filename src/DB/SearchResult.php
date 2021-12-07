@@ -14,14 +14,9 @@ use yii\db\BatchQueryResult;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class SearchResult extends MagicObject implements Iterator {
-    private BatchQueryResult $_queryResultIterator;
-    /**
-     * @var Base\Repository|Contracts\Repository
-     */
-    private $_repository;
+    private ?\PHPKitchen\Domain\Contracts\Repository $_repository = null;
 
-    public function __construct(BatchQueryResult $queryResult, Contracts\Repository $repository, $config = []) {
-        $this->_queryResultIterator = $queryResult;
+    public function __construct(private BatchQueryResult $_queryResultIterator, Contracts\Repository $repository, $config = []) {
         $this->setRepository($repository);
         parent::__construct($config);
     }

@@ -63,7 +63,7 @@ interface EntityDataSource {
      * @return integer|false the number of rows deleted, or false if the deletion is unsuccessful for some reason.
      * Note that it is possible the number of rows deleted is 0, even though the deletion execution is successful.
      */
-    public function deleteRecord();
+    public function deleteRecord(): int|false;
 
     /**
      * Returns the named attribute value.

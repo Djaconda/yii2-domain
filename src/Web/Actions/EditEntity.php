@@ -19,8 +19,6 @@ class EditEntity extends EntityModificationAction {
     }
 
     /**
-     * @param int $id
-     *
      * @return Response
      */
     public function run(int $id) {

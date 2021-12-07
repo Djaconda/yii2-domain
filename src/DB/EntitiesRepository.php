@@ -25,7 +25,7 @@ class EntitiesRepository extends Base\Repository {
      */
     public string $dataMapperClassName = Domain\Base\DataMapper::class;
     /**
-     * @var string indicates what finder to use. By default, equal following template "{model name}Finder" where model name is equal to
+     * @var ?string indicates what finder to use. By default, equal following template "{model name}Finder" where model name is equal to
      * the repository class name without "Repository" suffix.
      */
     private ?string $_finderClassName = null;
@@ -41,13 +41,7 @@ class EntitiesRepository extends Base\Repository {
     }
 
     //region ---------------------- ENTITY MANIPULATION METHODS -------------------
-
     /**
-     * @param Contracts\DomainEntity $entity
-     * @param bool $runValidation
-     * @param array|null $attributes
-     *
-     * @return bool
      * @throws UnableToSaveEntityException
      */
     protected function saveEntityInternal(Contracts\DomainEntity $entity, bool $runValidation, ?array $attributes): bool {
@@ -63,7 +57,7 @@ class EntitiesRepository extends Base\Repository {
             $this->triggerModelEvent($isEntityNew ? self::EVENT_AFTER_ADD : self::EVENT_AFTER_UPDATE, $entity);
             $this->triggerModelEvent(self::EVENT_AFTER_SAVE, $entity);
         } else {
-            $exception = new UnableToSaveEntityException('Failed to save entity ' . get_class($entity));
+            $exception = new UnableToSaveEntityException('Failed to save entity ' . $entity::class);
             $exception->errorsList = $dataSource->getErrors();
             throw $exception;
         }
@@ -158,10 +152,7 @@ class EntitiesRepository extends Base\Repository {
      * Be aware! False positive possible because of Yii BaseActiveRecord::getDirtyAttributes()
      * method compares values with type matching
      *
-     * @param Contracts\DomainEntity $entity
-     * @param string $name
      *
-     * @return bool
      */
     public function wasAttributeChanged(Contracts\DomainEntity $entity, string $name): bool {
         $dataSource = $entity->getDataMapper()->getDataSource();
@@ -174,10 +165,7 @@ class EntitiesRepository extends Base\Repository {
      * the saving of the entity.
      * Be aware! This method compare old value with new without type comparison.
      *
-     * @param Contracts\DomainEntity $entity
-     * @param string $name
      *
-     * @return bool
      */
     public function wasAttributeValueChanged(Contracts\DomainEntity $entity, string $name): bool {
         $oldValue = $this->getChangedAttribute($entity, $name);

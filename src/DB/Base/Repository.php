@@ -103,7 +103,9 @@ abstract class Repository extends Component implements Contracts\Repository {
         $exception = null;
         try {
             $result = $this->saveEntityInternal($entity, $runValidation, $attributes);
-            $result ? $this->commitTransaction() : null;
+            if ($result) {
+                $this->commitTransaction();
+            }
         } catch (Exception $e) {
             $result = false;
             $exception = $e;
@@ -169,7 +171,7 @@ abstract class Repository extends Component implements Contracts\Repository {
      *
      * @return Contracts\DomainEntity
      */
-    public function findOneWithPk($pk): Contracts\DomainEntity {
+    public function findOneWithPk($pk): ?Contracts\DomainEntity {
         return $this->find()->oneWithPk($pk);
     }
 
@@ -181,8 +183,6 @@ abstract class Repository extends Component implements Contracts\Repository {
     }
 
     /**
-     * @param int $batchSize
-     *
      * @return Contracts\DomainEntity[]
      */
     public function each(int $batchSize = 100): array {
@@ -190,8 +190,6 @@ abstract class Repository extends Component implements Contracts\Repository {
     }
 
     /**
-     * @param int $batchSize
-     *
      * @return Contracts\DomainEntity[][]
      */
     public function getBatchIterator(int $batchSize = 100): array {
@@ -201,20 +199,11 @@ abstract class Repository extends Component implements Contracts\Repository {
     public function createQuery(): Contracts\RecordQuery {
         return $this->container->create($this->queryClassName, [$recordClass = $this->recordClassName]);
     }
-    //endregion
 
-    //region ----------------------- GETTERS/SETTERS ------------------------------------
-
-    /**
-     * @return array
-     */
     public function getErrors(): array {
         return $this->errors;
     }
 
-    /**
-     * @param array $errors
-     */
     public function setErrors(array $errors): void {
         $this->errors = $errors;
     }

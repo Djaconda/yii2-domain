@@ -33,10 +33,7 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
     use ContainerAccess;
     use ServiceLocatorAccess;
 
-    /**
-     * @var Entity
-     */
-    private $_entity;
+    private ?\PHPKitchen\Domain\Contracts\DomainEntity $_entity = null;
     /**
      * @var null|array Defines map of entity attributes required in {@link convertAttributesToEntityAttributes()}
      * Format of map:
@@ -49,10 +46,7 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
      * </pre>
      */
     private ?array $_entityAttributesMap = null;
-    /**
-     * @var EntityController|Controller
-     */
-    private $_controller;
+    private ?\yii\web\Controller $_controller = null;
 
     public function convertToEntity(): Entity {
         $defaultAttributes = $this->prepareDefaultEntityAttributes();
@@ -87,7 +81,7 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
             if (is_string($formValue) && $this->canGetProperty($formValue)) {
                 $attributeValue = $this->$formValue;
             } elseif (is_callable($formValue)) {
-                $attributeValue = call_user_func($formValue);
+                $attributeValue = $formValue();
             } else {
                 $attributeValue = $formValue;
             }
@@ -99,8 +93,6 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
 
     /**
      * Populates the form by entity data.
-     *
-     * @return bool
      */
     public function loadAttributesFromEntity(): bool {
         $attributes = $this->convertEntityToSelfAttributes();
@@ -110,8 +102,6 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
 
     /**
      * Converts AR attributes to form attributes.
-     *
-     * @return array
      */
     protected function convertEntityToSelfAttributes(): array {
         $entity = $this->getEntity();
@@ -128,9 +118,7 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
     /**
      * Returns the name of entity attribute mapped to specified form field
      *
-     * @param string $formAttributeName
      *
-     * @return string
      */
     public function getEntityAttributeMappedToFieldName(string $formAttributeName): string {
         return array_flip($this->getEntityAttributesMap())[$formAttributeName];

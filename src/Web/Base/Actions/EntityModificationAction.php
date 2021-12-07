@@ -20,9 +20,9 @@ abstract class EntityModificationAction extends Action {
     use EntityActionHooks;
 
     /**
-     * @var int indicates whether to throw exception or handle it
+     * @var bool indicates whether to throw exception or handle it
      */
-    public $throwExceptions = false;
+    public bool $throwExceptions = false;
     protected ?Model $_model = null;
 
     public function __construct($id, $controller, $config = []) {

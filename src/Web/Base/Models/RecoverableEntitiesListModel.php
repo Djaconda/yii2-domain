@@ -13,8 +13,6 @@ use PHPKitchen\Domain\Data\EntitiesProvider;
 class RecoverableEntitiesListModel extends ListingModel {
     /**
      * Override this method
-     *
-     * @return EntitiesProvider
      */
     public function getDeletedDataProvider(): EntitiesProvider {
         $provider = $this->getDataProvider();

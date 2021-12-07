@@ -12,8 +12,6 @@ use PHPKitchen\Domain\Contracts\DomainEntity;
  */
 trait EntityRecovering {
     /**
-     * @param DomainEntity $entity
-     *
      * @return bool result.
      */
     public function recover(DomainEntity $entity): bool {

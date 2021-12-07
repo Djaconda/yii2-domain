@@ -16,6 +16,7 @@ use Yii;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
 use yii\db\AfterSaveEvent;
+use yii\db\StaleObjectException;
 
 /**
  * Represents
@@ -68,11 +69,6 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
         return static::getInstance()->createQuery(RecordQuery::class);
     }
 
-    /**
-     * @param string $class
-     *
-     * @return RecordQuery
-     */
     public function createQuery(string $class): RecordQuery {
         /**
          * @var RecordQuery $finder
@@ -202,9 +198,9 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
      * Note that it is possible the number of rows deleted is 0, even though the deletion execution is successful.
      * @throws StaleObjectException if [[optimisticLock|optimistic locking]] is enabled and the data
      * being deleted is outdated.
-     * @throws Exception in case delete failed.
+     * @throws \Exception|\Throwable in case delete failed.
      */
-    public function deleteRecord() {
+    public function deleteRecord(): int|false {
         return parent::delete();
     }
 
@@ -247,7 +243,6 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
     /**
      * @param EntitiesRepository $repository
      *
-     * @return ActiveQueryInterface
      * @deprecated this method should use only for domestic purposes
      *
      */
@@ -255,21 +250,16 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
         return $repository->find()->getQuery();
     }
 
-    /**
-     * @param string $byRecordClass
-     *
-     * @return false|EntitiesRepository
-     */
-    protected function getRelatedRepository(string $byRecordClass) {
+    protected function getRelatedRepository(string $byRecordClass): false|\PHPKitchen\Domain\DB\EntitiesRepository {
         return $this->relatedRepositories[$byRecordClass] ?? $this->initRelatedRepository($byRecordClass);
     }
 
     protected function initRelatedRepository(string $byRecordClass) {
-        $repositoryClass = false !== strpos($byRecordClass, 'Record') ? str_replace('Record', 'Repository', $byRecordClass) : null;
+        $repositoryClass = str_contains($byRecordClass, 'Record') ? str_replace('Record', 'Repository', $byRecordClass) : null;
         $container = $this->container;
         try {
             $repository = $repositoryClass ? $container->create($repositoryClass) : false;
-        } catch (Exception $e) {
+        } catch (Exception) {
             $repository = false;
         }
         $this->relatedRepositories[$byRecordClass] = $repository;

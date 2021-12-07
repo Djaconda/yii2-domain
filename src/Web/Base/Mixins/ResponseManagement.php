@@ -16,7 +16,7 @@ use yii\web\Response;
  */
 trait ResponseManagement {
     /**
-     * @var string|array|callable a url to redirect to a next page.
+     * @var string|array|callable|false a url to redirect to a next page.
      */
     public $redirectUrl;
 
@@ -25,12 +25,10 @@ trait ResponseManagement {
      *
      * @return mixed URL to redirect
      */
-    abstract protected function prepareDefaultRedirectUrl();
+    abstract protected function prepareDefaultRedirectUrl(): mixed;
 
     /**
      * Redirects to a next page based on URL defined at {@link redirectUrl} or defined by {@link redirectToNextPage}.
-     *
-     * @return Response
      */
     protected function redirectToNextPage(): Response {
         if (null === $this->redirectUrl) {

@@ -26,7 +26,7 @@ class Entity extends Component implements DomainEntity, IteratorAggregate, Array
     private ?DataMapper $_dataMapper = null;
 
     public function getId() {
-        return $this->dataMapper->primaryKey;
+        return $this->dataMapper->getPrimaryKey();
     }
 
     /**
@@ -74,7 +74,7 @@ class Entity extends Component implements DomainEntity, IteratorAggregate, Array
      *
      * @return mixed converted data. By default, returns the same data as passed.
      */
-    protected function convertDataToSourceAttributes(&$data) {
+    protected function convertDataToSourceAttributes(mixed $data): mixed {
         return $data;
     }
 

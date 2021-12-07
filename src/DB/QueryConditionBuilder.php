@@ -12,11 +12,9 @@ use PHPKitchen\Domain\Contracts;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class QueryConditionBuilder extends MagicObject {
-    protected \PHPKitchen\Domain\Contracts\RecordQuery $query;
     private array $_paramNamesCounters = [];
 
-    public function __construct(Contracts\RecordQuery $query, $config = []) {
-        $this->query = $query;
+    public function __construct(protected Contracts\RecordQuery $query, $config = []) {
         parent::__construct($config);
     }
 

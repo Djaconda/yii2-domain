@@ -31,7 +31,7 @@ trait LoggerAccess {
      * `Logger::LEVEL_PROFILE_BEGIN`, `Logger::LEVEL_PROFILE_END`.
      * @param string|null $category the category of the message.
      */
-    public function log(string $message, int $level, ?string $category = ''): void {
+    public function log(string|array $message, int $level, ?string $category = ''): void {
         if (empty($category)) {
             $category = static::class;
         }
@@ -122,9 +122,6 @@ trait LoggerAccess {
         static::getLogger()->log($message, Logger::LEVEL_TRACE, $category);
     }
 
-    /**
-     * @return Logger
-     */
     protected function getLogger(): Logger {
         if (!isset(static::$_logger)) {
             static::$_logger = Yii::$app->log->getLogger();

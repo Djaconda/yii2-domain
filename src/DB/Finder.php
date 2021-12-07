@@ -12,12 +12,7 @@ use PHPKitchen\Domain\Contracts;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class Finder extends MagicObject {
-    private Contracts\Specification $_query;
-    private Contracts\Repository $_repository;
-
-    public function __construct(Contracts\Specification $query, Contracts\Repository $repository, $config = []) {
-        $this->_query = $query;
-        $this->_repository = $repository;
+    public function __construct(private Contracts\Specification $_query, private Contracts\Repository $_repository, $config = []) {
         parent::__construct($config);
     }
 
@@ -73,7 +68,7 @@ class Finder extends MagicObject {
         $query = $this->getQuery();
         if ($query->hasMethod($name)) {
             $result = call_user_func_array([$query, $name], $params);
-            $queryClassName = get_class($query);
+            $queryClassName = $query::class;
             if (is_object($result) && is_a($result, $queryClassName)) {
                 $result = $this;
             }

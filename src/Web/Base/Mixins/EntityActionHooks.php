@@ -41,7 +41,9 @@ trait EntityActionHooks {
     }
 
     protected function handleFailedOperation() {
-        $this->addErrorFlash($this->validationFailedFlashMessage);
+        if ($this->validationFailedFlashMessage !== false) {
+            $this->addErrorFlash($this->validationFailedFlashMessage);
+        }
 
         return $this->printView();
     }

@@ -32,5 +32,6 @@ phpunit.phar
 # build files
 build
 
-# rector config
+# rector files
 rector.php
+rector.phar

@@ -60,7 +60,7 @@ trait TransactionAccess {
         try {
             $result = call_user_func_array([$this, $methodName], $methodArguments);
             $this->commitTransaction();
-        } catch (Exception $e) {
+        } catch (Exception) {
             $result = false;
             $this->rollbackTransaction();
         }
@@ -80,7 +80,7 @@ trait TransactionAccess {
         try {
             $result = $callback();
             $this->commitTransaction();
-        } catch (Exception $e) {
+        } catch (Exception) {
             $result = false;
             $this->rollbackTransaction();
         }

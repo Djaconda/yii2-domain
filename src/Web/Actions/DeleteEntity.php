@@ -27,7 +27,6 @@ class DeleteEntity extends Action {
     }
 
     /**
-     * @param int $id
      *
      * @return Response
      * @throws NotFoundHttpException
@@ -42,7 +41,7 @@ class DeleteEntity extends Action {
     protected function tryToDeleteEntity($entity): void {
         try {
             $savedSuccessfully = $this->getRepository()->delete($entity);
-        } catch (UnableToSaveEntityException $e) {
+        } catch (UnableToSaveEntityException) {
             $savedSuccessfully = false;
         }
         if ($savedSuccessfully) {

@@ -69,7 +69,7 @@ trait SessionMessagesManagement {
                     return $params[$paramName] ?? $paramName;
                 }, $value);
             } else {
-                $value = call_user_func($value, $params);
+                $value = $value($params);
             }
             if (is_int($key)) {
                 $session->setFlash($this->successFlashMessageKey, $value);
@@ -79,9 +79,6 @@ trait SessionMessagesManagement {
         }
     }
 
-    /**
-     * @return Session
-     */
     protected function getSession(): Session {
         return $this->serviceLocator->session;
     }

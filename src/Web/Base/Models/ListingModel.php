@@ -4,6 +4,7 @@ namespace PHPKitchen\Domain\Web\Base\Models;
 
 use PHPKitchen\Domain\Contracts\Specification;
 use PHPKitchen\Domain\Data\EntitiesProvider;
+use yii\data\BaseDataProvider;
 
 /**
  * Represents a view model designed to be used in listing actions.
@@ -16,10 +17,8 @@ class ListingModel extends ViewModel {
 
     /**
      * Override this method
-     *
-     * @return EntitiesProvider
      */
-    public function getDataProvider(): EntitiesProvider {
+    public function getDataProvider(): EntitiesProvider|BaseDataProvider {
         $provider = $this->repository->getEntitiesProvider();
         if ($this->fetchDataAsArray) {
             $provider->query->asArray();

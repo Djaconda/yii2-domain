@@ -18,11 +18,8 @@ abstract class RecordsRepository extends Base\Repository {
     }
 
     //----------------------- ENTITY MANIPULATION METHODS -----------------------//
-
     /**
      * @param Record|Contracts\DomainEntity $entity
-     * @param bool $runValidation
-     * @param array|null $attributes
      *
      * @return bool result.
      * @throws Domain\Exceptions\UnableToSaveEntityException
@@ -38,7 +35,7 @@ abstract class RecordsRepository extends Base\Repository {
             $this->triggerModelEvent($isEntityNew ? self::EVENT_BEFORE_ADD : self::EVENT_AFTER_UPDATE, $entity);
             $this->triggerModelEvent(self::EVENT_AFTER_SAVE, $entity);
         } else {
-            $exception = new Domain\Exceptions\UnableToSaveEntityException('Failed to save entity ' . get_class($entity));
+            $exception = new Domain\Exceptions\UnableToSaveEntityException('Failed to save entity ' . $entity::class);
             $exception->errorsList = $entity->getErrors();
             throw $exception;
         }
@@ -79,10 +76,7 @@ abstract class RecordsRepository extends Base\Repository {
 
     //----------------------- SEARCH METHODS -----------------------//
 
-    /**
-     * @return RecordQuery
-     */
-    public function find(): Contracts\RecordQuery {
+    public function find(): Finder|RecordQuery {
         return $this->createQuery();
     }
 

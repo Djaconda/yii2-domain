@@ -16,17 +16,12 @@ use PHPKitchen\Domain\DB\EntitiesRepository;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class DataMapper extends Component {
-    /**
-     * @var \PHPKitchen\Domain\DB\Record
-     */
-    protected Record $dataSource;
     protected ?array $relatedEntities = null;
 
     /**
      * DataMapper constructor.
      */
-    public function __construct($dataSource, $config = []) {
-        $this->dataSource = $dataSource;
+    public function __construct(protected $dataSource, $config = []) {
         parent::__construct($config);
     }
 
@@ -51,13 +46,7 @@ class DataMapper extends Component {
     }
 
     public function get($name) {
-        if (isset($this->relatedEntities[$name])) {
-            $property = $this->relatedEntities[$name];
-        } else {
-            $property = $this->getPropertyFromDataSource($name);
-        }
-
-        return $property;
+        return $this->relatedEntities[$name] ?? $this->getPropertyFromDataSource($name);
     }
 
     public function refresh(): bool {
@@ -91,7 +80,7 @@ class DataMapper extends Component {
         return is_array($property) && isset($property[0]) && ($property[0] instanceof Record) && $this->arrayHasOnlyRecords($property);
     }
 
-    protected function arrayHasOnlyRecords(&$array) {
+    protected function arrayHasOnlyRecords($array) {
         return array_reduce(
             $array,
             static fn($result, $element) => $element instanceof Record
@@ -100,18 +89,16 @@ class DataMapper extends Component {
 
     /**
      * @param $record
-     *
-     * @return null|EntitiesRepository
      */
     protected function findRepositoryForRecord($record): ?EntitiesRepository {
-        $recordClass = get_class($record);
-        $repositoryClass = strpos($recordClass, 'Record') !== false ? str_replace('Record', 'Repository',
+        $recordClass = $record::class;
+        $repositoryClass = str_contains($recordClass, 'Record') ? str_replace('Record', 'Repository',
             $recordClass) : null;
         $container = $this->container;
         try {
             /** @var EntitiesRepository $repository */
             $repository = $repositoryClass ? $container->create($repositoryClass) : null;
-        } catch (Exception $e) {
+        } catch (Exception) {
             $repository = null;
         }
 

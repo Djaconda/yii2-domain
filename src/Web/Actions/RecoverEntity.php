@@ -31,9 +31,7 @@ class RecoverEntity extends Action {
     }
 
     /**
-     * @param int|null $id
      *
-     * @return Response
      * @throws NotFoundHttpException
      * @throws InvalidConfigException
      */
@@ -64,7 +62,7 @@ class RecoverEntity extends Action {
             } else {
                 $savedSuccessfully = false;
             }
-        } catch (UnableToSaveEntityException $e) {
+        } catch (UnableToSaveEntityException) {
             $savedSuccessfully = false;
         }
 
