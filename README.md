@@ -24,7 +24,7 @@ Includes realization of a following patterns:
 
 ## Requirements
 
-**`PHP >= 7.4` is required.**
+**`PHP >= 8.1` is required.**
 
 ## Getting Started
 

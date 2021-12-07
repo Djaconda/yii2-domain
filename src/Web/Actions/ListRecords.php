@@ -2,8 +2,8 @@
 
 namespace PHPKitchen\Domain\Web\Actions;
 
-use PHPKitchen\Domain\Web\Base\Action;
-use PHPKitchen\Domain\Web\Base\ListingModel;
+use PHPKitchen\Domain\Web\Base\Actions\Action;
+use PHPKitchen\Domain\Web\Base\Models\ListingModel;
 use PHPKitchen\Domain\Web\Mixins\ViewModelManagement;
 
 /**

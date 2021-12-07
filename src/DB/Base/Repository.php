@@ -7,6 +7,8 @@ use PHPKitchen\Domain;
 use PHPKitchen\Domain\Base\Component;
 use PHPKitchen\Domain\Contracts;
 use PHPKitchen\Domain\Data\EntitiesProvider;
+use PHPKitchen\Domain\DB\Finder;
+use PHPKitchen\Domain\DB\RecordQuery;
 use PHPKitchen\Domain\Mixins\TransactionAccess;
 use yii\base\InvalidConfigException;
 
@@ -53,7 +55,7 @@ abstract class Repository extends Component implements Contracts\Repository {
      * @var string records query class name. This class being used if no query specified in morel directory. Change it
      * in {@link init()} method if you need custom default query.
      */
-    private string $_defaultQueryClassName = Domain\DB\RecordQuery::class;
+    private string $_defaultQueryClassName = RecordQuery::class;
     private ?string $_className = null;
     /**
      * @var nuLL|string indicates what entity to use. By default, equal following template "{model name}Entity" where model name is equal to
@@ -71,10 +73,7 @@ abstract class Repository extends Component implements Contracts\Repository {
      */
     private ?string $_recordClassName = null;
 
-    /**
-     * @return Domain\DB\Finder|Domain\DB\RecordQuery
-     */
-    abstract public function find();
+    abstract public function find(): Finder|RecordQuery;
 
     abstract protected function saveEntityInternal(Contracts\DomainEntity $entity, bool $runValidation, ?array $attributes): bool;
 
@@ -139,7 +138,7 @@ abstract class Repository extends Component implements Contracts\Repository {
      * }
      * ```
      *
-     * @return boolean whether the insertion or updating should continue.
+     * @return bool whether the insertion or updating should continue.
      * If `false`, the insertion or updating will be cancelled.
      */
     protected function triggerModelEvent(string $eventName, Contracts\DomainEntity $entity): bool {

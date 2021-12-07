@@ -41,6 +41,7 @@ class EntitiesRepository extends Base\Repository {
     }
 
     //region ---------------------- ENTITY MANIPULATION METHODS -------------------
+
     /**
      * @throws UnableToSaveEntityException
      */
@@ -164,8 +165,6 @@ class EntitiesRepository extends Base\Repository {
      * Method returns the result of checking whether the attribute value was changed during
      * the saving of the entity.
      * Be aware! This method compare old value with new without type comparison.
-     *
-     *
      */
     public function wasAttributeValueChanged(Contracts\DomainEntity $entity, string $name): bool {
         $oldValue = $this->getChangedAttribute($entity, $name);
@@ -199,13 +198,8 @@ class EntitiesRepository extends Base\Repository {
             'dataMapper' => $container->create($this->dataMapperClassName, [$record]),
         ]);
     }
-    //endregion
 
-    //region ----------------------- SEARCH METHODS -------------------------------
-    /**
-     * @return Finder|RecordQuery
-     */
-    public function find() {
+    public function find(): Finder|RecordQuery {
         return $this->createFinder();
     }
 

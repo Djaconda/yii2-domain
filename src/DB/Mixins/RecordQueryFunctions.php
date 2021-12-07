@@ -6,7 +6,7 @@ use PHPKitchen\Domain\DB\Record;
 use ReflectionMethod;
 
 /**
- * Combines functions required for {@link PHPKitchen\Domain\DB\RecordQuery}.
+ * Combines functions required for {@link \PHPKitchen\Domain\DB\RecordQuery}.
  * The only goal of this mixin is to allow building custom query classes without extending {@link PHPKitchen\Domain\DB\RecordQuery}
  *
  * @property string $alias public alias of the {@link _alias}
@@ -55,7 +55,7 @@ trait RecordQueryFunctions {
     public function oneWithPk($pk) {
         $pkParam = $this->buildAliasedNameOfParam('pk');
         $primaryKey = $this->buildAliasedNameOfField($this->primaryKeyName);
-        $this->andWhere("{$primaryKey}={$pkParam}", [$pkParam => $pk]);
+        $this->andWhere("$primaryKey = $pkParam", [$pkParam => $pk]);
 
         return $this->one();
     }

@@ -87,10 +87,7 @@ class DataMapper extends Component {
         );
     }
 
-    /**
-     * @param $record
-     */
-    protected function findRepositoryForRecord($record): ?EntitiesRepository {
+    protected function findRepositoryForRecord(Record $record): ?EntitiesRepository {
         $recordClass = $record::class;
         $repositoryClass = str_contains($recordClass, 'Record') ? str_replace('Record', 'Repository',
             $recordClass) : null;

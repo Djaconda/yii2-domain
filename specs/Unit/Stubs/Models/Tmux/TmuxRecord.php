@@ -18,7 +18,7 @@ class TmuxRecord extends Record {
         return $this->dummyRecord;
     }
 
-    public function getPrimaryKey($asBool = false) {
+    public function getPrimaryKey($asArray = false) {
         return $this->id;
     }
 

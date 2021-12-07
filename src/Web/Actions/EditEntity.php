@@ -2,7 +2,7 @@
 
 namespace PHPKitchen\Domain\Web\Actions;
 
-use PHPKitchen\Domain\Web\Base\EntityModificationAction;
+use PHPKitchen\Domain\Web\Base\Actions\EntityModificationAction;
 use yii\web\Response;
 
 /**

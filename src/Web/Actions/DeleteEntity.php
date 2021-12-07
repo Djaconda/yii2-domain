@@ -3,7 +3,7 @@
 namespace PHPKitchen\Domain\Web\Actions;
 
 use PHPKitchen\Domain\Exceptions\UnableToSaveEntityException;
-use PHPKitchen\Domain\Web\Base\Action;
+use PHPKitchen\Domain\Web\Base\Actions\Action;
 use PHPKitchen\Domain\Web\Mixins\ModelSearching;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;

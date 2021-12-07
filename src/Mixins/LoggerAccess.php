@@ -26,7 +26,7 @@ trait LoggerAccess {
      *
      * @param string|array $message the message to be logged. This can be a simple string or a more
      * complex data structure that will be handled by a [[Target|log target]].
-     * @param integer $level the level of the message. This must be one of the following:
+     * @param int $level the level of the message. This must be one of the following:
      * `Logger::LEVEL_ERROR`, `Logger::LEVEL_WARNING`, `Logger::LEVEL_INFO`, `Logger::LEVEL_TRACE`,
      * `Logger::LEVEL_PROFILE_BEGIN`, `Logger::LEVEL_PROFILE_END`.
      * @param string|null $category the category of the message.
@@ -35,7 +35,7 @@ trait LoggerAccess {
         if (empty($category)) {
             $category = static::class;
         }
-        static::getLogger()->log($message, $level, $category);
+        $this->getLogger()->log($message, $level, $category);
     }
 
     /**
@@ -47,7 +47,7 @@ trait LoggerAccess {
      * @param string $category the category of the message.
      */
     public function logInfo(string $message, string $category = ''): void {
-        static::log($message, Logger::LEVEL_INFO, $category);
+        $this->log($message, Logger::LEVEL_INFO, $category);
     }
 
     /**
@@ -59,7 +59,7 @@ trait LoggerAccess {
      * @param string $category the category of the message.
      */
     public function logWarning(string $message, string $category = ''): void {
-        static::log($message, Logger::LEVEL_WARNING, $category);
+        $this->log($message, Logger::LEVEL_WARNING, $category);
     }
 
     /**
@@ -71,7 +71,7 @@ trait LoggerAccess {
      * @param string $category the category of the message.
      */
     public function logError(string $message, string $category = ''): void {
-        static::log($message, Logger::LEVEL_ERROR, $category);
+        $this->log($message, Logger::LEVEL_ERROR, $category);
     }
 
     /**
@@ -94,7 +94,7 @@ trait LoggerAccess {
      * @see endProfile()
      */
     public function beginProfile(string $token, string $category = ''): void {
-        static::getLogger()->log($token, Logger::LEVEL_PROFILE_BEGIN, $category);
+        $this->getLogger()->log($token, Logger::LEVEL_PROFILE_BEGIN, $category);
     }
 
     /**
@@ -107,7 +107,7 @@ trait LoggerAccess {
      * @see beginProfile()
      */
     public function endProfile(string $token, string $category = ''): void {
-        static::getLogger()->log($token, Logger::LEVEL_PROFILE_END, $category);
+        $this->getLogger()->log($token, Logger::LEVEL_PROFILE_END, $category);
     }
 
     /**
@@ -119,7 +119,7 @@ trait LoggerAccess {
      * @param string $category the category of the message.
      */
     public function trace(string $message, string $category = ''): void {
-        static::getLogger()->log($message, Logger::LEVEL_TRACE, $category);
+        $this->getLogger()->log($message, Logger::LEVEL_TRACE, $category);
     }
 
     protected function getLogger(): Logger {

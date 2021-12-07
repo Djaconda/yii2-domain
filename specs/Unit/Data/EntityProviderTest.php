@@ -18,13 +18,13 @@ use PHPKitchen\Domain\Specs\Unit\Stubs\Models\Dummy\DummyRepository;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class EntityProviderTest extends Spec {
-    const STUBBED_RECORDS_COUNT = 5;
+    public const STUBBED_RECORDS_COUNT = 5;
 
     /**
      * @test
      * @covers ::getModels
      */
-    public function getDataAsEntitiesBehavior() {
+    public function getDataAsEntitiesBehavior(): void {
         $dataProvider = $this->createDatProviderWithStubbedRecordsData();
         $count = $dataProvider->getCount();
         $I = $this->tester;
@@ -46,7 +46,7 @@ class EntityProviderTest extends Spec {
      * @test
      * @covers ::getModels
      */
-    public function getDataAsArray() {
+    public function getDataAsArray(): void {
         $dataProvider = $this->createDatProviderWithStubbedArrayData();
         $count = $dataProvider->getCount();
         $I = $this->tester;
@@ -64,7 +64,7 @@ class EntityProviderTest extends Spec {
         }
     }
 
-    protected function createDatProviderWithStubbedRecordsData() {
+    protected function createDatProviderWithStubbedRecordsData(): EntitiesProvider {
         $repository = new DummyRepository();
         $query = new DummyQuery(DummyRecord::class);
         $query->records = [
@@ -83,7 +83,7 @@ class EntityProviderTest extends Spec {
         ]);
     }
 
-    protected function createDatProviderWithStubbedArrayData() {
+    protected function createDatProviderWithStubbedArrayData(): EntitiesProvider {
         $repository = new DummyRepository();
         $query = new DummyQuery(DummyRecord::class);
         $query->records = [

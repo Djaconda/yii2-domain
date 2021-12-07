@@ -12,6 +12,7 @@ use PHPKitchen\Domain\Contracts\EntityDataSource;
 use PHPKitchen\Domain\Contracts\LoggerAware;
 use PHPKitchen\Domain\Mixins\LoggerAccess;
 use PHPKitchen\Domain\Mixins\StaticSelfAccess;
+use Throwable;
 use Yii;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
@@ -140,7 +141,7 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
      * @param array|null $attributeNames list of attribute names that need to be saved. Defaults to null,
      * meaning all attributes that are loaded from DB will be saved.
      *
-     * @return boolean whether the saving succeeded (i.e. no validation errors occurred).
+     * @return bool whether the saving succeeded (i.e. no validation errors occurred).
      */
     public function validateAndSave(?array $attributeNames = null): bool {
         if ($this->getIsNewRecord()) {
@@ -171,7 +172,7 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
      * @param array|null $attributeNames list of attribute names that need to be saved. Defaults to null,
      * meaning all attributes that are loaded from DB will be saved.
      *
-     * @return boolean whether the saving succeeded (i.e. no validation errors occurred).
+     * @return bool whether the saving succeeded (i.e. no validation errors occurred).
      */
     public function saveWithoutValidation(array $attributeNames = null): bool {
         if ($this->getIsNewRecord()) {
@@ -194,11 +195,11 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
      * In the above step 1 and 3, events named [[EVENT_BEFORE_DELETE]] and [[EVENT_AFTER_DELETE]]
      * will be raised by the corresponding methods.
      *
-     * @return integer|false the number of rows deleted, or false if the deletion is unsuccessful for some reason.
+     * @return int|false the number of rows deleted, or false if the deletion is unsuccessful for some reason.
      * Note that it is possible the number of rows deleted is 0, even though the deletion execution is successful.
      * @throws StaleObjectException if [[optimisticLock|optimistic locking]] is enabled and the data
      * being deleted is outdated.
-     * @throws \Exception|\Throwable in case delete failed.
+     * @throws Exception|Throwable in case delete failed.
      */
     public function deleteRecord(): int|false {
         return parent::delete();
@@ -250,7 +251,7 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
         return $repository->find()->getQuery();
     }
 
-    protected function getRelatedRepository(string $byRecordClass): false|\PHPKitchen\Domain\DB\EntitiesRepository {
+    protected function getRelatedRepository(string $byRecordClass): false|EntitiesRepository {
         return $this->relatedRepositories[$byRecordClass] ?? $this->initRelatedRepository($byRecordClass);
     }
 
