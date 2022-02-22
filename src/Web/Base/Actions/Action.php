@@ -75,9 +75,9 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      * Prints page view file defined at {@link viewFile}.
      * Params being passed to view from {@link prepareViewContext} and {@link getDefaultViewParams}
      *
-     * @return string|Response the rendering result.
+     * @return array|string|Response the rendering result.
      */
-    protected function printView(): string|Response {
+    protected function printView(): array|string|Response {
         return $this->printable ? $this->renderViewFile([]) : $this->redirectToNextPage();
     }
 
@@ -87,9 +87,9 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      * @param array $params the parameters (name-value pairs) that should be made available in the view.
      * Params are extended by {@link prepareViewContext} and {@link getDefaultViewParams}
      *
-     * @return string|Response the rendering result.
+     * @return array|string|Response the rendering result.
      */
-    protected function renderViewFile(array $params = []): string|Response {
+    protected function renderViewFile(array $params = []): array|string|Response {
         return $this->controller->render($this->viewFile, $this->prepareParamsForViewFile($params));
     }
 
@@ -101,9 +101,9 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
      * @param array $params the parameters (name-value pairs) that should be made available in the view.
      * Params are extended by {@link prepareViewContext} and {@link getDefaultViewParams}
      *
-     * @return string|Response the rendering result.
+     * @return array|string|Response the rendering result.
      */
-    protected function renderViewFileForAjax(array $params = []): string|Response {
+    protected function renderViewFileForAjax(array $params = []): array|string|Response {
         return $this->controller->renderAjax($this->viewFile, $this->prepareParamsForViewFile($params));
     }
 

@@ -43,10 +43,10 @@ trait LoggerAccess {
      * An informative message is typically logged by an application to keep record of
      * something important (e.g. an administrator logs in).
      *
-     * @param string $message the message to be logged.
-     * @param string $category the category of the message.
+     * @param string|array $message the message to be logged.
+     * @param string|null $category the category of the message.
      */
-    public function logInfo(string $message, string $category = ''): void {
+    public function logInfo(string|array $message, ?string $category = ''): void {
         $this->log($message, Logger::LEVEL_INFO, $category);
     }
 
@@ -55,10 +55,10 @@ trait LoggerAccess {
      * A warning message is typically logged when an error occurs while the execution
      * can still continue.
      *
-     * @param string $message the message to be logged.
-     * @param string $category the category of the message.
+     * @param string|array $message the message to be logged.
+     * @param string|null $category the category of the message.
      */
-    public function logWarning(string $message, string $category = ''): void {
+    public function logWarning(string|array $message, ?string $category = ''): void {
         $this->log($message, Logger::LEVEL_WARNING, $category);
     }
 
@@ -67,10 +67,10 @@ trait LoggerAccess {
      * An error message is typically logged when an unrecoverable error occurs
      * during the execution of an application.
      *
-     * @param string $message the message to be logged.
-     * @param string $category the category of the message.
+     * @param string|array $message the message to be logged.
+     * @param string|null $category the category of the message.
      */
-    public function logError(string $message, string $category = ''): void {
+    public function logError(string|array $message, ?string $category = ''): void {
         $this->log($message, Logger::LEVEL_ERROR, $category);
     }
 

@@ -30,7 +30,7 @@ trait EntityActionHooks {
     public string|false $validationFailedFlashMessage = 'Please correct errors.';
     public string $successFlashMessage = 'Changes successfully saved.';
 
-    abstract protected function printView(): string|Response;
+    abstract protected function printView(): array|string|Response;
 
     protected function handleSuccessfulOperation(): array|string|Response {
         $this->addSuccessFlash($this->successFlashMessage);
@@ -41,7 +41,7 @@ trait EntityActionHooks {
         return $this->printView();
     }
 
-    protected function handleFailedOperation() {
+    protected function handleFailedOperation(): array|string|Response {
         if ($this->validationFailedFlashMessage !== false) {
             $this->addErrorFlash($this->validationFailedFlashMessage);
         }
