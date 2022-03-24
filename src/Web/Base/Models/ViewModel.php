@@ -146,7 +146,7 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
         $this->_entity = $entity;
     }
 
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->getEntity()->id;
     }
 

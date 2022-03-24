@@ -36,9 +36,9 @@ class Action extends \yii\base\Action implements ServiceLocatorAware, ContainerA
     use ResponseManagement;
 
     /**
-     * @var string name of the view, which should be rendered
+     * @var string|null name of the view, which should be rendered
      */
-    public string $viewFile;
+    public ?string $viewFile = null;
     /**
      * @var callable callback that prepares params for a view. Use it to extend default view params list.
      */
