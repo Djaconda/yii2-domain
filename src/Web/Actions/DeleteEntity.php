@@ -31,7 +31,7 @@ class DeleteEntity extends Action {
      * @return Response
      * @throws NotFoundHttpException
      */
-    public function run(int $id) {
+    public function run($id) {
         $entity = $this->findEntityByIdentifierOrFail($id);
         $this->tryToDeleteEntity($entity);
 

@@ -17,9 +17,9 @@ use yii\base\InvalidConfigException;
  */
 abstract class ServiceAction extends Action {
     /**
-     * @var object a service class object
+     * @var string|object a service class object
      */
-    private object $_service;
+    private string|object $_service;
 
     public function getService(): object {
         if (!is_object($this->_service)) {
@@ -29,7 +29,7 @@ abstract class ServiceAction extends Action {
         return $this->_service;
     }
 
-    public function setService(object $service): void {
+    public function setService(string $service): void {
         if ((!class_exists($service) || !$this->container->has($service))) {
             throw new InvalidConfigException("Service must be an object or container definition");
         }

@@ -12,7 +12,7 @@ use yii\web\Response;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class EditEntity extends EntityModificationAction {
-    protected int $entityId;
+    protected string|int $entityId;
 
     public function init(): void {
         $this->setViewFileIfNotSetTo('edit');
@@ -21,7 +21,7 @@ class EditEntity extends EntityModificationAction {
     /**
      * @return Response
      */
-    public function run(int $id) {
+    public function run($id) {
         $this->entityId = $id;
 
         return $this->loadModelAndSaveOrPrintView();
