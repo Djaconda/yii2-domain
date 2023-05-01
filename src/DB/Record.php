@@ -2,6 +2,7 @@
 
 namespace PHPKitchen\Domain\DB;
 
+use PHPKitchen\Domain\Contracts\Repository;
 use Exception;
 use PHPKitchen\DI\Contracts\ContainerAware;
 use PHPKitchen\DI\Contracts\ServiceLocatorAware;
@@ -247,7 +248,7 @@ class Record extends ActiveRecord implements Contracts\Record, ContainerAware, S
      * @deprecated this method should use only for domestic purposes
      *
      */
-    protected function getQueryFromRepository(Contracts\Repository $repository): ActiveQueryInterface {
+    protected function getQueryFromRepository(Repository $repository): ActiveQueryInterface {
         return $repository->find()->getQuery();
     }
 

@@ -4,7 +4,7 @@ namespace PHPKitchen\Domain\DB;
 
 use Iterator;
 use PHPKitchen\Domain\Base\MagicObject;
-use PHPKitchen\Domain\Contracts;
+use PHPKitchen\Domain\Contracts\EntityDataSource;
 use PHPKitchen\Domain\Contracts\Repository;
 use yii\db\BatchQueryResult;
 
@@ -22,10 +22,11 @@ class SearchResult extends MagicObject implements Iterator {
         parent::__construct($config);
     }
 
-    public function current() {
+    public function current(): mixed {
+        $entity = [];
         $iterator = $this->getQueryResultIterator();
         $value = $iterator->current();
-        if ($iterator->each && $value instanceof Contracts\EntityDataSource) {
+        if ($iterator->each && $value instanceof EntityDataSource) {
             $entity = $this->getRepository()->createEntityFromSource($value);
         } elseif (!$iterator->each) {
             foreach ($value as $record) {
@@ -42,7 +43,7 @@ class SearchResult extends MagicObject implements Iterator {
         $this->getQueryResultIterator()->next();
     }
 
-    public function key() {
+    public function key(): mixed {
         return $this->getQueryResultIterator()->key();
     }
 

@@ -62,9 +62,7 @@ abstract class EntityModificationAction extends Action {
             $model->loadAttributesFromEntity();
         } catch (UnableToSaveEntityException $e) {
             $savedSuccessfully = false;
-            if ($this->throwExceptions !== 0) {
-                throw $e;
-            }
+            throw $e;
         }
         if ($savedSuccessfully) {
             // @TODO seems like duplicates handleSuccessfulOperation - need to investigate
@@ -102,7 +100,7 @@ abstract class EntityModificationAction extends Action {
     }
 
     public function getModel(): Model {
-        if (null === $this->_model) {
+        if (!$this->_model instanceof Model) {
             $this->initModel();
         }
 

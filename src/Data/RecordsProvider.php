@@ -2,6 +2,7 @@
 
 namespace PHPKitchen\Domain\Data;
 
+use PHPKitchen\Domain\Contracts\Repository;
 use PHPKitchen\Domain\Contracts;
 use PHPKitchen\Domain\DB\EntitiesRepository;
 use PHPKitchen\Domain\DB\RecordQuery;
@@ -18,13 +19,13 @@ use yii\data\ActiveDataProvider;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class RecordsProvider extends ActiveDataProvider {
-    protected Contracts\Repository|EntitiesRepository $_repository;
+    protected Repository|EntitiesRepository $_repository;
 
-    public function getRepository(): Contracts\Repository {
+    public function getRepository(): Repository {
         return $this->_repository;
     }
 
-    public function setRepository(Contracts\Repository $repository): void {
+    public function setRepository(Repository $repository): void {
         $this->_repository = $repository;
     }
 }

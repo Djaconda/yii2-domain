@@ -73,7 +73,7 @@ class ViewModel extends Model implements ContainerAware, ServiceLocatorAware {
      */
     public function convertToEntityAttributes(): array {
         $entityAttributesMap = $this->getEntityAttributesMap();
-        if (empty($entityAttributesMap)) {
+        if ($entityAttributesMap === []) {
             return $this->getAttributes();
         }
         $attributes = [];

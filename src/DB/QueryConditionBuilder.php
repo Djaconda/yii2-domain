@@ -2,6 +2,7 @@
 
 namespace PHPKitchen\Domain\DB;
 
+use PHPKitchen\Domain\Contracts\RecordQuery;
 use PHPKitchen\Domain\Base\MagicObject;
 use PHPKitchen\Domain\Contracts;
 
@@ -14,7 +15,7 @@ use PHPKitchen\Domain\Contracts;
 class QueryConditionBuilder extends MagicObject {
     private array $_paramNamesCounters = [];
 
-    public function __construct(protected Contracts\RecordQuery $query, $config = []) {
+    public function __construct(protected RecordQuery $query, $config = []) {
         parent::__construct($config);
     }
 

@@ -63,7 +63,7 @@ class DataMapper extends Component {
             $this->relatedEntities[$propertyName] = $property;
         } elseif ($this->propertyIsAnArrayOfRecords($property)) {
             $repository = $this->findRepositoryForRecord($property[0]);
-            if ($repository !== null) {
+            if ($repository instanceof EntitiesRepository) {
                 $entities = [];
                 foreach ($property as $key => $item) {
                     $entities[$key] = $repository->createEntityFromSource($item);

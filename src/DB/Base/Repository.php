@@ -2,6 +2,8 @@
 
 namespace PHPKitchen\Domain\DB\Base;
 
+use PHPKitchen\Domain\Base\ModelEvent;
+use PHPKitchen\Domain\Contracts\DomainEntity;
 use Exception;
 use PHPKitchen\Domain;
 use PHPKitchen\Domain\Base\Component;
@@ -50,7 +52,7 @@ abstract class Repository extends Component implements Contracts\Repository {
      * @var string class name of an event that being triggered on each important action. Change it in {@link init()} method
      * if you need custom event.
      */
-    public string $modelEventClassName = Domain\Base\ModelEvent::class;
+    public string $modelEventClassName = ModelEvent::class;
     /**
      * @var string records query class name. This class being used if no query specified in morel directory. Change it
      * in {@link init()} method if you need custom default query.
@@ -75,18 +77,18 @@ abstract class Repository extends Component implements Contracts\Repository {
 
     abstract public function find(): Finder|RecordQuery;
 
-    abstract protected function saveEntityInternal(Contracts\DomainEntity $entity, bool $runValidation, ?array $attributes): bool;
+    abstract protected function saveEntityInternal(DomainEntity $entity, bool $runValidation, ?array $attributes): bool;
 
     //region ----------------------- ENTITY MANIPULATION METHODS ------------------------
 
-    public function validateAndSave(Contracts\DomainEntity $entity, ?array $attributes = null): bool {
+    public function validateAndSave(DomainEntity $entity, ?array $attributes = null): bool {
         $this->clearErrors();
 
         return $this->useTransactions ? $this->saveEntityUsingTransaction($entity, $runValidation = true,
             $attributes) : $this->saveEntityInternal($entity, $runValidation = true, $attributes);
     }
 
-    public function saveWithoutValidation(Contracts\DomainEntity $entity, ?array $attributes = null): bool {
+    public function saveWithoutValidation(DomainEntity $entity, ?array $attributes = null): bool {
         $this->clearErrors();
 
         return $this->useTransactions ? $this->saveEntityUsingTransaction($entity, $runValidation = false,
@@ -94,7 +96,7 @@ abstract class Repository extends Component implements Contracts\Repository {
     }
 
     protected function saveEntityUsingTransaction(
-        Contracts\DomainEntity $entity,
+        DomainEntity $entity,
         bool $runValidation,
         ?array $attributes
     ): bool {
@@ -141,7 +143,7 @@ abstract class Repository extends Component implements Contracts\Repository {
      * @return bool whether the insertion or updating should continue.
      * If `false`, the insertion or updating will be cancelled.
      */
-    protected function triggerModelEvent(string $eventName, Contracts\DomainEntity $entity): bool {
+    protected function triggerModelEvent(string $eventName, DomainEntity $entity): bool {
         /**
          * @var domain\Base\ModelEvent $event
          */
@@ -170,7 +172,7 @@ abstract class Repository extends Component implements Contracts\Repository {
      *
      * @return Contracts\DomainEntity
      */
-    public function findOneWithPk($pk): ?Contracts\DomainEntity {
+    public function findOneWithPk($pk): ?DomainEntity {
         return $this->find()->oneWithPk($pk);
     }
 

@@ -2,6 +2,8 @@
 
 namespace PHPKitchen\Domain\DB;
 
+use PHPKitchen\Domain\Contracts\Repository;
+use PHPKitchen\Domain\Contracts\EntityDataSource;
 use PHPKitchen\Domain\Base\MagicObject;
 use PHPKitchen\Domain\Contracts;
 use PHPKitchen\Domain\Contracts\Specification;
@@ -13,7 +15,7 @@ use PHPKitchen\Domain\Contracts\Specification;
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
 class Finder extends MagicObject {
-    public function __construct(private Specification $_query, private Contracts\Repository $_repository, $config = []) {
+    public function __construct(private Specification $_query, private Repository $_repository, $config = []) {
         parent::__construct($config);
     }
 
@@ -56,13 +58,9 @@ class Finder extends MagicObject {
     }
 
     protected function createEntityFromRecord($record) {
-        if ($record instanceof Contracts\EntityDataSource) {
-            $entity = $this->getRepository()->createEntityFromSource($record);
-        } else {
-            $entity = $record;
-        }
-
-        return $entity;
+        return $record instanceof EntityDataSource
+            ? $this->getRepository()->createEntityFromSource($record)
+            : $record;
     }
 
     public function __call($name, $params) {
@@ -70,7 +68,7 @@ class Finder extends MagicObject {
         if ($query->hasMethod($name)) {
             $result = call_user_func_array([$query, $name], $params);
             $queryClassName = $query::class;
-            if (is_object($result) && is_a($result, $queryClassName)) {
+            if ($result instanceof $queryClassName) {
                 $result = $this;
             }
         } else {
@@ -84,7 +82,7 @@ class Finder extends MagicObject {
         return $this->_query;
     }
 
-    protected function getRepository(): Contracts\Repository {
+    protected function getRepository(): Repository {
         return $this->_repository;
     }
 }

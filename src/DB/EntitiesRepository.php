@@ -2,6 +2,11 @@
 
 namespace PHPKitchen\Domain\DB;
 
+use PHPKitchen\Domain\DB\Base\Repository;
+use PHPKitchen\Domain\Base\DataMapper;
+use PHPKitchen\Domain\Contracts\DomainEntity;
+use PHPKitchen\Domain\Contracts\Record;
+use PHPKitchen\Domain\Contracts\EntityDataSource;
 use PHPKitchen\Domain;
 use PHPKitchen\Domain\Contracts;
 use PHPKitchen\Domain\Data\EntitiesProvider;
@@ -17,13 +22,13 @@ use yii\base\InvalidConfigException;
  * @package PHPKitchen\Domain\base
  * @author Dmitry Kolodko <prowwid@gmail.com>
  */
-class EntitiesRepository extends Base\Repository {
+class EntitiesRepository extends Repository {
     /**
      * @var string data mapper class name. Required to map data from record to entity. Change it in {@link init()} method
      * if you need custom mapper. But be aware - data mapper is internal class and it is strongly advised to not
      * touch this property.
      */
-    public string $dataMapperClassName = Domain\Base\DataMapper::class;
+    public string $dataMapperClassName = DataMapper::class;
     /**
      * @var ?string indicates what finder to use. By default, equal following template "{model name}Finder" where model name is equal to
      * the repository class name without "Repository" suffix.
@@ -45,7 +50,7 @@ class EntitiesRepository extends Base\Repository {
     /**
      * @throws UnableToSaveEntityException
      */
-    protected function saveEntityInternal(Contracts\DomainEntity $entity, bool $runValidation, ?array $attributes): bool {
+    protected function saveEntityInternal(DomainEntity $entity, bool $runValidation, ?array $attributes): bool {
         $isEntityNew = $entity->isNew();
         $dataSource = $entity->getDataMapper()->getDataSource();
 
@@ -66,7 +71,7 @@ class EntitiesRepository extends Base\Repository {
         return $result;
     }
 
-    public function delete(Contracts\DomainEntity $entity): bool {
+    public function delete(DomainEntity $entity): bool {
         if ($this->triggerModelEvent(self::EVENT_BEFORE_DELETE, $entity)) {
             $result = $entity->getDataMapper()->getDataSource()->deleteRecord();
         } else {
@@ -79,69 +84,69 @@ class EntitiesRepository extends Base\Repository {
         return $result;
     }
 
-    public function validate(Contracts\DomainEntity $entity): bool {
+    public function validate(DomainEntity $entity): bool {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         return $dataSource->validate();
     }
 
-    public function refresh(Contracts\DomainEntity $entity): bool {
+    public function refresh(DomainEntity $entity): bool {
         return $entity->getDataMapper()->refresh();
     }
     //endregion
 
     //region ----------------------- ENTITY DATA METHODS --------------------------
-    public function isNewOrJustAdded(Contracts\DomainEntity $entity): bool {
+    public function isNewOrJustAdded(DomainEntity $entity): bool {
         return $entity->isNew() || $this->isJustAdded($entity);
     }
 
-    public function isJustUpdated(Contracts\DomainEntity $entity): bool {
+    public function isJustUpdated(DomainEntity $entity): bool {
         return !$this->isJustAdded($entity);
     }
 
-    public function isJustAdded(Contracts\DomainEntity $entity): bool {
+    public function isJustAdded(DomainEntity $entity): bool {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         return $dataSource->isJustAdded();
     }
 
-    public function getDirtyAttributes(Contracts\DomainEntity $entity, array $names = null): array {
+    public function getDirtyAttributes(DomainEntity $entity, array $names = null): array {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         return $dataSource->getDirtyAttributes($names);
     }
 
-    public function getOldAttributes(Contracts\DomainEntity $entity): array {
+    public function getOldAttributes(DomainEntity $entity): array {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         return $dataSource->getOldAttributes();
     }
 
-    public function getOldAttribute(Contracts\DomainEntity $entity, string $name) {
+    public function getOldAttribute(DomainEntity $entity, string $name) {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         return $dataSource->getOldAttribute($name);
     }
 
-    public function isAttributeChanged(Contracts\DomainEntity $entity, string $name, bool $identical = true): bool {
+    public function isAttributeChanged(DomainEntity $entity, string $name, bool $identical = true): bool {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         return $dataSource->isAttributeChanged($name, $identical);
     }
 
-    public function setChangedAttributes(Contracts\DomainEntity $entity, array $changedAttributes): void {
+    public function setChangedAttributes(DomainEntity $entity, array $changedAttributes): void {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         $dataSource->setChangedAttributes($changedAttributes);
     }
 
-    public function getChangedAttributes(Contracts\DomainEntity $entity): array {
+    public function getChangedAttributes(DomainEntity $entity): array {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         return $dataSource->getChangedAttributes();
     }
 
-    public function getChangedAttribute(Contracts\DomainEntity $entity, string $name) {
+    public function getChangedAttribute(DomainEntity $entity, string $name) {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         return $dataSource->getChangedAttribute($name);
@@ -155,7 +160,7 @@ class EntitiesRepository extends Base\Repository {
      *
      *
      */
-    public function wasAttributeChanged(Contracts\DomainEntity $entity, string $name): bool {
+    public function wasAttributeChanged(DomainEntity $entity, string $name): bool {
         $dataSource = $entity->getDataMapper()->getDataSource();
 
         return $dataSource->wasAttributeChanged($name);
@@ -166,7 +171,7 @@ class EntitiesRepository extends Base\Repository {
      * the saving of the entity.
      * Be aware! This method compare old value with new without type comparison.
      */
-    public function wasAttributeValueChanged(Contracts\DomainEntity $entity, string $name): bool {
+    public function wasAttributeValueChanged(DomainEntity $entity, string $name): bool {
         $oldValue = $this->getChangedAttribute($entity, $name);
         if ($oldValue === false) {
             return false;
@@ -177,7 +182,7 @@ class EntitiesRepository extends Base\Repository {
     //endregion
 
     //region ----------------------- INSTANTIATION METHODS ------------------------
-    public function createNewEntity(): Contracts\DomainEntity {
+    public function createNewEntity(): DomainEntity {
         $container = $this->container;
 
         return $container->create([
@@ -186,11 +191,11 @@ class EntitiesRepository extends Base\Repository {
         ]);
     }
 
-    private function createRecord(): Contracts\Record {
+    private function createRecord(): Record {
         return $this->container->create($this->recordClassName);
     }
 
-    public function createEntityFromSource(Contracts\EntityDataSource $record): Contracts\DomainEntity {
+    public function createEntityFromSource(EntityDataSource $record): DomainEntity {
         $container = $this->container;
 
         return $container->create([

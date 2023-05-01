@@ -21,7 +21,7 @@ trait StrategiesComposingAlgorithm {
     public function executeCallAction(): void {
         $chainedStrategies = $this->getChainedStrategies();
         $container = $this->container;
-        foreach ($chainedStrategies as $key => $chainedStrategy) {
+        foreach ($chainedStrategies as $chainedStrategy) {
             if (!is_object($chainedStrategy)) {
                 $chainedStrategy = $container->create($chainedStrategy, $this->getStrategyConstructorArguments());
             }
